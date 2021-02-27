@@ -2,6 +2,7 @@ const crypto = require('crypto')
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const { truncate } = require('fs')
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -12,6 +13,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide a email"],
     unique: true,
+    trim: true,
     match: [
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       "Please provide a valid email"
@@ -23,6 +25,15 @@ const UserSchema = new mongoose.Schema({
     minlength: 8,
     select: false // not send this when requested from client
   },
+  role: {
+    type: Number,
+    default: 0 // 0 -> user   1 -> admin
+  },
+  // avatar: {
+  //   type: String,
+  //   default: ""
+  // },
+  timestamps: true,
   resetPasswordToken: String,
   resetPasswordExpire: Date
 })
