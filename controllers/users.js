@@ -11,8 +11,15 @@ exports.register = async (req, res, next) => {
     return next(new ErrorResponse('Not all fields have been entered.', 400))
   }
 
+  const existingUser = await User.findOne({email})
+  if (existingUser) {
+    return next(new ErrorResponse('An account with this email already exist.', 404))
+  }
 
   try {
+    const activationToken = createActivationToken(email)
+    const activationURL = `${process.env.FRONTEND_URL}/activation/${activationToken}`
+
     const user = await User.create({
       name, email, password
     })
@@ -22,6 +29,10 @@ exports.register = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
+}
+
+exports.activationEmail = async (req, res, next) => {
+  next()
 }
 
 exports.login = async (req, res, next) => {
@@ -66,7 +77,7 @@ exports.forgotPassword = async (req, res, next) => {
     await user.save()
     
     // Create reset url to email to provided email
-    const resetUrl = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`
     
     const message = `
       <h1>You have requested a password reset</h1>
@@ -136,4 +147,8 @@ const sendToken = (user, statusCode, res) => {
     success: true,
     token
   })
+}
+
+const createActivationToken = (payload) => {
+  return jwt.sign(payload, process.env.ACTIVATION_SECRET, {expiresIn: '10m'})
 }
