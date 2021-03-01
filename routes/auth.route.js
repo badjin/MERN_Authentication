@@ -5,9 +5,16 @@ const {
   forgotPassword,
   resetPassword,
   activationEmail
-} = require('../controllers/users')
+} = require('../controllers/auth.controller')
 
-router.post('/register', register)
+const {
+  registerValidator,
+  loginValidator,
+  forgotPasswordValidator,
+  resetPasswordkValidator
+} = require('../utils/validationCheck')
+
+router.post('/register', registerValidator, register)
 
 router.post('/login', login)
 

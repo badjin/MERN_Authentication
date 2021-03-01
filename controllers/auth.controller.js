@@ -2,37 +2,78 @@ const User = require('../models/User')
 const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
 const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
+const { validationResult } = require('express-validator')
 
 exports.register = async (req, res, next) => {
   const { name, email, password } = req.body
 
-  // validate
-  if (!email || !password || !name) {
-    return next(new ErrorResponse('Not all fields have been entered.', 400))
-  }
+  const errors = validationResult(req)
 
-  const existingUser = await User.findOne({email})
-  if (existingUser) {
-    return next(new ErrorResponse('An account with this email already exist.', 404))
-  }
+  if (!errors.isEmpty()) {
+    const firstError = errors.array().map(error => error.msg)[0]
+    return next(new ErrorResponse(firstError, 422))
+    
+  } else {
+    await User.findOne({email}).exec((err, user) => {
+      if (user) {
+        return next(new ErrorResponse('An account with this email already exist.', 400))
+      }
+    })
+  }  
 
   try {
-    const activationToken = createActivationToken(email)
+    const activationToken = createActivationToken({ name, email, password })
     const activationURL = `${process.env.FRONTEND_URL}/activation/${activationToken}`
 
-    const user = await User.create({
-      name, email, password
-    })
+    const message = `
+      <h2>Thank you for registering!</h2>
+      <p>Use the link below to enter the <b>Lilac TV</b> up to 15 minutes before the start.</p>
+      <a href=${activationURL} clicktracking=off>${activationURL}</a>
+      <hr />
+      <p>This email may containe sensetive information</p>
+      <p>${process.env.FRONTEND_URL}</p>
+    `
 
-    sendToken(user, 200, res)
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Activation Email',
+        text: message
+      })
 
+      res.status(200).json({
+        success: true,
+        message: 'We have sent you an email to activate your email. Please check your email.'
+      })
+
+    } catch (error) {
+      return next(new ErrorResponse('Email could not be sent.', 404))
+    }
   } catch (error) {
     next(error)
   }
 }
 
 exports.activationEmail = async (req, res, next) => {
-  next()
+  const token = req.params.activationToken
+  if (!token) return next(new ErrorResponse('No activation token. Please try again.', 400))
+  
+  try {
+    await jwt.verify(token, process.env.ACTIVATION_SECRET, (err, decoded) => {
+      if (err) {
+        return next(new ErrorResponse('This link has been expired. Please register again.', 401))
+      } else {
+        const { name, email, password } = jwt.decode(token)
+        const user = new User({ name, email, password })
+        User.create(user)
+          .then(() => sendToken(user, 200, res))
+          .catch((err) => next(err))
+      }
+    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 exports.login = async (req, res, next) => {
@@ -145,10 +186,11 @@ const sendToken = (user, statusCode, res) => {
   const token = user.getSignedToken()
   res.status(statusCode).json({
     success: true,
+    message: 'Your account has been successfully registered.',
     token
   })
 }
 
 const createActivationToken = (payload) => {
-  return jwt.sign(payload, process.env.ACTIVATION_SECRET, {expiresIn: '10m'})
+  return jwt.sign(payload, process.env.ACTIVATION_SECRET, {expiresIn: '15m'})
 }
