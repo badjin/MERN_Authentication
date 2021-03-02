@@ -67,7 +67,14 @@ exports.activationEmail = async (req, res, next) => {
         const { name, email, password } = jwt.decode(token)
         const user = new User({ name, email, password })
         User.create(user)
-          .then(() => sendToken(user, 200, res))
+          .then(() => {
+            const token = user.getSignedToken()
+            res.status(statusCode).json({
+              success: true,
+              message: 'Your account has been successfully registered.',
+              token
+            })
+          })
           .catch((err) => next(err))
       }
     })
@@ -79,15 +86,18 @@ exports.activationEmail = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   const { email, password } = req.body
 
-  // validate
-  if (!email || !password){
-    return next(new ErrorResponse('Not all fields have been entered.', 400))
+  const errors = validationResult(req)
+
+  if (!errors.isEmpty()) {
+    const firstError = errors.array().map(error => error.msg)[0]
+    return next(new ErrorResponse(firstError, 422))
+    
   }
 
   try {
     const user = await User.findOne({ email }).select('+password')
     if (!user) {
-      return next(new ErrorResponse('No account with this email has been registered.', 401))
+      return next(new ErrorResponse('No account with this email.', 401))
     }
 
     const isMatch = await user.matchPassword(password)
@@ -95,7 +105,12 @@ exports.login = async (req, res, next) => {
       return next(new ErrorResponse('Invalid credentials', 401))
     }
 
-    sendToken(user, 200, res)
+    const token = user.getSignedToken()
+    res.status(200).json({
+      success: true,
+      user: { email: user.email, name: user.name, role: user.role },
+      token
+    })
 
   } catch (error) {
     next(error)
@@ -180,15 +195,6 @@ exports.resetPassword = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
-}
-
-const sendToken = (user, statusCode, res) => {
-  const token = user.getSignedToken()
-  res.status(statusCode).json({
-    success: true,
-    message: 'Your account has been successfully registered.',
-    token
-  })
 }
 
 const createActivationToken = (payload) => {

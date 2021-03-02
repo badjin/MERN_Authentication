@@ -16,7 +16,7 @@ const {
 
 router.post('/register', registerValidator, register)
 
-router.post('/login', login)
+router.post('/login', loginValidator, login)
 
 router.post('/forgotpassword', forgotPassword)
 

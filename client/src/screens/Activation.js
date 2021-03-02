@@ -19,6 +19,7 @@ function Activation({match}) {
     if (token) {
       setFormData({ ...formData, name, token })
     }
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [match.params])
 
   const { name, token } = formData

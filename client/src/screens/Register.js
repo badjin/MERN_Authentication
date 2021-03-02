@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import authSvg from '../assests/auth.svg';
-import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
-import { isAuth } from '../helpers/auth';
-import { Redirect } from 'react-router-dom';
+import React, { useState } from 'react'
+import authSvg from '../assests/auth.svg'
+import { ToastContainer, toast } from 'react-toastify'
+import axios from 'axios'
+import { isAuth } from '../helpers/auth'
+import { Redirect } from 'react-router-dom'
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -12,19 +12,19 @@ const Register = () => {
     password: '',
     confirmPassword: '',
     textChange: 'Sign Up'
-  });
+  })
 
-  const { name, email, password, confirmPassword, textChange } = formData;
+  const { name, email, password, confirmPassword, textChange } = formData
 
   const handleChange = text => e => {
-    setFormData({ ...formData, [text]: e.target.value });
-  };
+    setFormData({ ...formData, [text]: e.target.value })
+  }
 
   const handleSubmit = e => {
     e.preventDefault();
     if (name && email && password) {
       if (password === confirmPassword) {
-        setFormData({ ...formData, textChange: 'Submitting' });        
+        setFormData({ ...formData, textChange: 'Submitting' })   
         axios
           .post(`${process.env.REACT_APP_API_URL}/register`, {
             name,
@@ -39,8 +39,8 @@ const Register = () => {
               password: '',
               confirmPassword: '',
               textChange: 'Submitted'
-            });
-            toast.success(res.data.message);
+            })
+            toast.success(res.data.message)
           })
           .catch(err => {
             setFormData({
@@ -50,16 +50,16 @@ const Register = () => {
               password: '',
               confirmPassword: '',
               textChange: 'Sign Up'
-            });
-            toast.error(err.response.data.error);
-          });
+            })
+            toast.error(err.response.data.error)
+          })
       } else {
-        toast.error("Passwords don't matches");
+        toast.error("Passwords don't matches")
       }
     } else {
-      toast.error("Please fill all fields");
+      toast.error("Please fill all fields")
     }
-  };
+  }
 
   return (
     <div className='min-h-screen bg-gray-100 text-gray-900 flex justify-center'>
