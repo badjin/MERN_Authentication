@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import authSvg from '../assests/auth.svg';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { isAuth } from '../helpers/auth';
 import { Redirect } from 'react-router-dom';
@@ -70,7 +69,7 @@ const Register = () => {
         <div className='lg:w-1/2 xl:w-5/12 p-6 sm:p-12'>
           <div className='mt-12 flex flex-col items-center'>
             <h1 className='text-2xl xl:text-3xl font-extrabold'>
-              Sign Up for Congar
+              Sign Up
             </h1>
 
             <form

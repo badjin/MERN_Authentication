@@ -3,7 +3,7 @@ const {
 } = require('express-validator')
 
 exports.registerValidator = [
-    check('name', 'Name is required').notEmpty()
+    check('name', "Please add a user's name").notEmpty()
     .isLength({
         min: 4,
         max: 32
@@ -43,5 +43,5 @@ exports.resetPasswordValidator = [
         .not()
         .isEmpty()
         .isLength({ min: 8 })
-        .withMessage('Password must be at least  8 characters long')
+        .withMessage('Password must be at least 8 characters long')
 ];

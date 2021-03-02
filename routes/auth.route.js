@@ -22,6 +22,6 @@ router.post('/forgotpassword', forgotPassword)
 
 router.put('/resetpassword/:resetToken', resetPassword)
 
-router.put('/activation/:activationToken', activationEmail)
+router.post('/activation/', activationEmail)
 
 module.exports = router

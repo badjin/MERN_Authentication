@@ -24,7 +24,7 @@ exports.register = async (req, res, next) => {
 
   try {
     const activationToken = createActivationToken({ name, email, password })
-    const activationURL = `${process.env.FRONTEND_URL}/activation/${activationToken}`
+    const activationURL = `${process.env.FRONTEND_URL}/users/activate/${activationToken}`
 
     const message = `
       <h2>Thank you for registering!</h2>
@@ -56,7 +56,7 @@ exports.register = async (req, res, next) => {
 }
 
 exports.activationEmail = async (req, res, next) => {
-  const token = req.params.activationToken
+  const {token} = req.body
   if (!token) return next(new ErrorResponse('No activation token. Please try again.', 400))
   
   try {
