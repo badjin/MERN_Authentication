@@ -1,18 +1,28 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import authSvg from '../assests/auth.svg'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
-import { authenticate, isAuth } from '../helpers/auth';
-import { Link, Redirect, useHistory } from 'react-router-dom';
+import { authenticate, isAuth } from '../helpers/auth'
+import { Link, Redirect, useHistory } from 'react-router-dom'
 
 
-function Login() {
+const Login = () =>  {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     textChange: 'Sign In'
   })
-  let history = useHistory()
+
+  useEffect(() => {
+    setFormData({...formData, 
+      email: '',
+      password: '',
+      textChange: 'Sign In'
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
+
+  const history = useHistory()
 
   const { email, password, textChange } = formData
 
@@ -28,32 +38,32 @@ function Login() {
     }
 
     setFormData({ ...formData, textChange: 'Submitting' })
-    axios
-      .post(`${process.env.REACT_APP_API_URL}/login`, {
-        email,
-        password
-      })
-      .then(res => {
-        authenticate(res, () => {
-          setFormData({
-            ...formData,
-            email: '',
-            password: '',
-            textChange: 'Submitted'
-          });
-          isAuth() && isAuth().role === 'admin' ? history.push('/admin') : history.push('/private')
-          toast.success(`Hey ${res.data.user.name}, Welcome back!`)
-        })
-      })
-      .catch(err => {
+    
+    axios.post(`${process.env.REACT_APP_API_URL}/login`, {
+      email,
+      password
+    })
+    .then(res => {
+      authenticate(res, () => {
         setFormData({
           ...formData,
           email: '',
           password: '',
-          textChange: 'Sign In'
+          textChange: 'Submitted'
         })
-        toast.error(err.response.data.error)
-      });
+        isAuth() && isAuth().role === 'admin' ? history.push('/admin') : history.push('/private')
+        toast.success(`Hey ${res.data.user.name}, Welcome back!`)
+      })
+    })
+    .catch(err => {
+      setFormData({
+        ...formData,
+        email: '',
+        password: '',
+        textChange: 'Sign In'
+      })
+      toast.error(err.response.data.error)
+    })
   }
 
   return (

@@ -11,17 +11,17 @@ const {
   registerValidator,
   loginValidator,
   forgotPasswordValidator,
-  resetPasswordkValidator
+  resetPasswordValidator
 } = require('../utils/validationCheck')
 
 router.post('/register', registerValidator, register)
 
 router.post('/login', loginValidator, login)
 
-router.post('/forgotpassword', forgotPassword)
+router.post('/forgotpassword', forgotPasswordValidator, forgotPassword)
 
-router.put('/resetpassword/:resetToken', resetPassword)
+router.put('/resetpassword', resetPasswordValidator, resetPassword)
 
-router.post('/activation/', activationEmail)
+router.post('/activation', activationEmail)
 
 module.exports = router

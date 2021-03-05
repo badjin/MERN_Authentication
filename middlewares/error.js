@@ -1,3 +1,4 @@
+const { JsonWebTokenError } = require('jsonwebtoken')
 const ErrorResponse = require('../utils/errorResponse')
 
 const errorHandler = (err, req, res, next) => {
@@ -14,12 +15,26 @@ const errorHandler = (err, req, res, next) => {
                 break
             default:
                 message = "Something went wrong"
+                break
         }
         error = new ErrorResponse(message, 400)
     } else if (error.errors) {
         for (let errorName in error.errors) {
             if (error.errors[errorName].message)
                 message = error.errors[errorName].message
+        }
+        error = new ErrorResponse(message, 400)
+    } else if(error.name) {
+        switch (error.name) {
+            case 'JsonWebTokenError':
+                message = 'Invalid Token. Please try again.'
+                break
+            case 'TokenExpiredError':
+                message = 'This link has been expired. Please try again.'
+                break
+            default:
+                message = 'TOKEN ERROR'
+                break
         }
         error = new ErrorResponse(message, 400)
     }

@@ -24,74 +24,28 @@ const UserSchema = new mongoose.Schema({
     minlength: [8, "Password must be at least 8 characters long."],
     select: false // not send this when requested from client
   },
-  // salt: String,
   role: {
     type: String,
     default: 'subscriber'
   },
-  resetPasswordLink: {
-    data: String,
+  resetPasswordToken: {
+    type: String,
     default: ''
-  },
-  // avatar: {
-  //   type: String,
-  //   default: ""
-  // },  
-  resetPasswordToken: String,
-  resetPasswordExpire: Date
+  }
 }, {timestamps: true})
 
 UserSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
     next()
   }
-
+  this.resetPasswordToken = ''
   const salt = await bcrypt.genSalt(10)
   this.password = await bcrypt.hash(this.password, salt)
   next()
 })
 
-// methods
-UserSchema.methods = {
-  matchPassword: async function(password) {
-    return await bcrypt.compare(password, this.password)
-  },
-
-  getSignedToken: function() {
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
-  },
-
-  getResetPasswordToken: function() {
-    const resetToken = crypto.randomBytes(20).toString('hex')
-
-    // Hash token (private key) and save to database
-    this.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex")      
-    this.resetPasswordExpire = Date.now() + 10 * (60 * 1000) //현재 기준 10분간 유효
-
-    return resetToken
-  }
+UserSchema.methods.matchPassword = async function(password) {
+  return await bcrypt.compare(password, this.password)
 }
-
-// UserSchema.methods.matchPassword = async function(password) {
-//   return await bcrypt.compare(password, this.password)
-// }
-
-// UserSchema.methods.getSignedToken = function() {
-//   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
-// }
-
-// UserSchema.methods.getResetPasswordToken = function() {
-//   const resetToken = crypto.randomBytes(20).toString('hex')
-
-//   // Hash token (private key) and save to database
-//   this.resetPasswordToken = crypto
-//     .createHash("sha256")
-//     .update(resetToken)
-//     .digest("hex");
-    
-//   this.resetPasswordExpire = Date.now() + 10 * (60 * 1000) //현재 기준 10분간 유효
-
-//   return resetToken
-// }
 
 module.exports = mongoose.model('User', UserSchema)

@@ -3,14 +3,16 @@ import authSvg from '../assests/welcome.svg'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 import jwt from 'jsonwebtoken'
-import { isAuth } from '../helpers/auth'
-import { Redirect } from 'react-router-dom'
+import { authenticate, isAuth } from '../helpers/auth'
+import { useHistory } from 'react-router-dom'
 
 function Activation({match}) {
   const [formData, setFormData] = useState({
     name: '',
     token: ''
   })
+
+  const history = useHistory()
 
   useEffect(() => {
     let token = match.params.token
@@ -27,12 +29,15 @@ function Activation({match}) {
   const handleSubmit = e => {
     e.preventDefault()
 
-    axios
-      .post(`${process.env.REACT_APP_API_URL}/activation`, {
-        token
-      })
+    axios.post(`${process.env.REACT_APP_API_URL}/activation`, { token })
       .then(res => {
-        toast.success(res.data.message)
+        authenticate(res, () => {
+          setTimeout(() => {
+            toast.success(res.data.message)
+          },1000)
+          isAuth() && isAuth().role === 'admin' ? history.push('/admin') : history.push('/private')            
+        })
+        // toast.success(res.data.message)
       })
       .catch(err => {        
         console.log(err.response)
@@ -42,7 +47,6 @@ function Activation({match}) {
 
   return (
     <div className='min-h-screen bg-gray-100 text-gray-900 flex justify-center'>
-      {isAuth() && <Redirect to='/' />}
       <ToastContainer />
       <div className='max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1'>
         <div className='lg:w-1/2 xl:w-5/12 p-6 sm:p-12'>
