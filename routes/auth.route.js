@@ -4,9 +4,9 @@ const {
   login,
   forgotPassword,
   resetPassword,
-  activationEmail
+  activationEmail,
+  googleLogin
 } = require('../controllers/auth.controller')
-
 const {
   registerValidator,
   loginValidator,
@@ -23,5 +23,7 @@ router.post('/forgotpassword', forgotPasswordValidator, forgotPassword)
 router.put('/resetpassword', resetPasswordValidator, resetPassword)
 
 router.post('/activation', activationEmail)
+
+router.post('/googlelogin', googleLogin)
 
 module.exports = router

@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const ErrorResponse = require('../utils/errorResponse')
 
-exports.protect = async (req, res, next) => {
+exports.requireSignin = async (req, res, next) => {
   let token
 
   if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
@@ -15,7 +15,7 @@ exports.protect = async (req, res, next) => {
   }
 
   try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET)    
+    const verified = jwt.verify(token, process.env.AUTH_SECRET)    
     if (!verified) {
       return next(new ErrorResponse('Token verification failed, authorization denied.', 401))
     }
@@ -30,5 +30,25 @@ exports.protect = async (req, res, next) => {
 
   } catch (error) {
     return next(new ErrorResponse('No authorized to access this route.', 401))
+  }
+}
+
+exports.adminMiddleware = async (req, res, next) => {
+  try {
+    console.log(req.user)
+    const user = await User.findOne({email: req.body.email})
+    if(!user) {
+      return next(new ErrorResponse('No user found with this email.', 400))
+    }
+
+    if (user.role !== 'admin') {
+      return next(new ErrorResponse('Admin resource. Access denied.', 401))      
+    }
+
+    req.profile = user
+    next()
+    
+  } catch (error) {
+    next(error)
   }
 }

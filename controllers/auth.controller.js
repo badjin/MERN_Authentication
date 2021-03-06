@@ -3,6 +3,8 @@ const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
 const jwt = require('jsonwebtoken')
 const { validationResult } = require('express-validator')
+const { OAuth2Client } = require('google-auth-library')
+const dummy = require('mongoose-dummy')
 
 exports.register = async (req, res, next) => {
   const { name, email, password } = req.body
@@ -21,6 +23,17 @@ exports.register = async (req, res, next) => {
   }  
 
   try {
+
+    // Dummy User creater
+    // for (let i = 0; i < 100; i++) {
+    //   let randomUser = dummyUserCreater()
+    //   User.create({
+    //     name: randomUser.name,
+    //     email: randomUser.email,
+    //     password: '12345678'
+    //   })
+    // }    
+
     const activationToken = createToken({ name, email, password }, process.env.ACTIVATION_SECRET, process.env.ACTIVATE_EXPIRES_IN)
     const activationURL = `${process.env.FRONTEND_URL}/users/activate/${activationToken}`
 
@@ -66,7 +79,7 @@ exports.activationEmail = async (req, res, next) => {
         const user = new User({ name, email, password })
         User.create(user)
           .then(() => {
-            const token = createToken({ id: user._id }, process.env.JWT_SECRET, process.env.AUTH_EXPIRES_IN)
+            const token = createToken({ id: user._id }, process.env.AUTH_SECRET, process.env.AUTH_EXPIRES_IN)
             res.status(200).json({
               success: true,
               message: 'Your account has been successfully registered.',
@@ -98,17 +111,16 @@ exports.login = async (req, res, next) => {
       return next(new ErrorResponse('No account with this email.', 401))
     }
 
+    if (user.googleAccount) {
+      return next(new ErrorResponse('This account should be signen in with Google.', 401))
+    }
+
     const isMatch = await user.matchPassword(password)
     if (!isMatch) {
       return next(new ErrorResponse('Invalid credentials', 401))
     }
-
-    const token = createToken({ id: user._id }, process.env.JWT_SECRET, process.env.AUTH_EXPIRES_IN)
-    res.status(200).json({
-      success: true,
-      user: { email: user.email, name: user.name, role: user.role },
-      token
-    })
+    
+    successLogin(res, user)
 
   } catch (error) {
     next(error)
@@ -144,7 +156,7 @@ exports.forgotPassword = async (req, res, next) => {
       <p>This email may containe sensetive information.</p>
       <p>${process.env.FRONTEND_URL}</p>
     `    
-   
+
     try {
 
       await user.updateOne({ resetPasswordToken: token }, (err) => {
@@ -216,4 +228,63 @@ exports.resetPassword = async (req, res, next) => {
   }
 }
 
+const client = new OAuth2Client(process.env.GOOGLE_OAUTH2)
+exports.googleLogin = async (req, res, next) => {
+  // Get token from request
+  const { idToken } = req.body
+
+  try {
+    const response = await client.verifyIdToken({ idToken, audience: process.env.GOOGLE_OAUTH2})
+    const { email_verified, name, email } = response.payload
+    if(!email_verified) {
+      return next(new ErrorResponse('Google login failed. Try again', 400))
+    }
+
+    try {
+      const user = await User.findOne({ email }).select('+password')
+      if (!user) {
+        let password = email + process.env.AUTH_SECRET
+        const user = new User({ name, email, password, googleAccount: true })
+        User.create(user)
+          .then(() => {
+            successLogin(res, user)
+          })
+          .catch(() => next(new ErrorResponse('User signin failed with Google', 400)))
+        
+      } else {
+        successLogin(res, user)
+      }
+  
+    } catch (error) {
+      next(error)
+    }
+
+  } catch (error) {
+    next(new ErrorResponse('User signin failed with Google', 400))
+  }
+
+}
+
 const createToken = (payload, secret, expires) => jwt.sign(payload, secret, {expiresIn: expires})
+
+const successLogin = (res, user) => {
+  const token = createToken({ id: user._id }, process.env.AUTH_SECRET, process.env.AUTH_EXPIRES_IN)
+  res.status(200).json({
+    success: true,
+    user: { 
+      id: user._id,
+      email: user.email,
+      name: user.name, 
+      role: user.role 
+    },
+    token
+  })
+}
+
+const dummyUserCreater = () => {
+  const ignoredFields = ['_id','created_at', '__v', /detail.*_info/];
+  return dummy(User, {
+    ignore: ignoredFields,
+    returnDate: true
+  })
+}

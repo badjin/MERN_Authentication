@@ -13,10 +13,10 @@ const App = () => {
       <Route path='/' exact render={props => <Home {...props} /> } />
       <Route path='/register' render={props => <Register {...props} /> } />
       <Route path='/login' render={props => <Login {...props} />} />
-      <Route path='/users/activate/:token' render={props => <Activation {...props} />} />
-      <Route path='/users/password/forget' render={props => <ForgotPassword {...props} />} />
+      <Route path='/users/activate/:token' exact render={props => <Activation {...props} />} />
+      <Route path='/users/password/forget' exact render={props => <ForgotPassword {...props} />} />
       <Route path='/users/password/reset/:token' exact render={props => <ResetPassword {...props} />} />
-      <Route path="/private" exact render={props => <Private {...props} />} />
+      <Route path="/private" render={props => <Private {...props} />} />
     </Switch>  
   )
 }

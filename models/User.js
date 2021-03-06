@@ -1,7 +1,5 @@
-const crypto = require('crypto')
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -31,6 +29,10 @@ const UserSchema = new mongoose.Schema({
   resetPasswordToken: {
     type: String,
     default: ''
+  },
+  googleAccount:{
+    type: Boolean,
+    default: false
   }
 }, {timestamps: true})
 
@@ -44,7 +46,7 @@ UserSchema.pre('save', async function(next) {
   next()
 })
 
-UserSchema.methods.matchPassword = async function(password) {
+UserSchema.methods.matchPassword = async function(password) {  
   return await bcrypt.compare(password, this.password)
 }
 
