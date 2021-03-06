@@ -41,7 +41,6 @@ const Login = () =>  {
         },1000)
         isAuth() && isAuth().role === 'admin' ? history.push('/admin') : history.push('/private')            
       })
-      // toast.success(`Hey ${res.data.user.name}, Welcome back!`)
     }).catch((err) => {
       toast.error(err.response.data.error)
     })

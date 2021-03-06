@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 import { updateUser, isAuth, getCookie, signout } from '../helpers/auth'
 
-const Private = ({ history }) => {
+const Admin = ({ history }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,7 +26,7 @@ const Private = ({ history }) => {
         }
       })
       .then(res => {
-        const { role, name, email } = res.data.user
+        const { role, name, email } = res.data.user;
         setFormData({ ...formData, role, name, email })
       })
       .catch(err => {
@@ -48,10 +48,9 @@ const Private = ({ history }) => {
 
   const handleSubmit = e => {
     const token = getCookie('token')
-    console.log(token)
     e.preventDefault()
     setFormData({ ...formData, textChange: 'Submitting' })
-    axios.put(`${process.env.REACT_APP_API_URL}/user/update`,{
+    axios.put(`${process.env.REACT_APP_API_URL}/admin/update`, {
         name,
         email,
         password: password1
@@ -79,7 +78,7 @@ const Private = ({ history }) => {
         <div className='lg:w-1/2 xl:w-5/12 p-6 sm:p-12'>
           <div className='mt-12 flex flex-col items-center'>
             <h1 className='text-2xl xl:text-3xl font-extrabold'>
-              Profile Update
+              Admin Update
             </h1>
 
             <form
@@ -132,7 +131,7 @@ const Private = ({ history }) => {
               <div className='flex flex-col items-center'>
                 <a
                   className='w-full max-w-xs font-bold shadow-sm rounded-lg py-3
-                  bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5'
+           bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5'
                   href='/'
                   target='_self'
                 >
@@ -149,9 +148,9 @@ const Private = ({ history }) => {
             style={{ backgroundImage: `url(${authSvg})` }}
           ></div>
         </div>
-      </div>
+      </div>      
     </div>
   )
 }
 
-export default Private
+export default Admin
