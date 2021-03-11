@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.jcontainer {
+  @apply h-content;
+  @apply bg-gray-100;
+  @apply text-gray-900;
+  @apply flex;
+  @apply justify-center;
+}

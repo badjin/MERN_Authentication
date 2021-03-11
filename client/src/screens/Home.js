@@ -5,11 +5,11 @@ import { ToastContainer, toast } from 'react-toastify'
 
 const Home = ({ history }) => {
   return (
-    <div className='min-h-screen bg-gray-100 text-gray-900 flex justify-center'>
+    <div className='jcontainer'>
       <ToastContainer />
       <div className='max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1'>
         <div className='lg:w-1/2 xl:w-8/12 p-6 sm:p-12'>
-          <div className='mt-12 flex flex-col items-center'>
+          <div className='mt-6 flex flex-col items-center'>
             <h1 className='text-2xl xl:text-2xl font-extrabold  text-center '>
               Ultimate Auth with Email & Google with diferent roles,
               email verification & Forget passwored{' '}
