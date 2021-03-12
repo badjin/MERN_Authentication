@@ -1,35 +1,32 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import { useForm } from "react-hook-form"
 import authSvg from '../assests/auth.svg'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 import { authenticate, isAuth } from '../helpers/auth'
-import { Link, Redirect, useHistory } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { GoogleLogin } from 'react-google-login'
 import googleLogo from '../assests/google-icon.svg'
 
-const Login = () =>  {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    textChange: 'Sign In'
-  })
+const Login = ({history}) =>  {
+  const { register, handleSubmit, errors } = useForm()
 
-  useEffect(() => {
-    setFormData({...formData, 
-      email: '',
-      password: '',
-      textChange: 'Sign In'
+  const onSubmit = (data) => {
+    console.log(data)
+    axios
+    .post(`${process.env.REACT_APP_API_URL}/login`, data)
+    .then(res => {      
+      authenticate(res, () => {        
+        setTimeout(() => {
+          toast.success(`Hey ${res.data.user.name}, Welcome back!`)
+        },1000)
+        isAuth() && isAuth().role === 'admin' ? history.push('/admin') : history.push('/private')
+      })
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
-
-  const history = useHistory()
-
-  const { email, password, textChange } = formData 
-
-  const handleChange = text => e => {
-    setFormData({ ...formData, [text]: e.target.value })
-  }
+    .catch(err => {      
+      toast.error(err.response.data.error)
+    })
+  } 
 
   // Send google token
   const sendGoogleToken = (token) => {
@@ -48,46 +45,7 @@ const Login = () =>  {
   }
 
   const responseGoogle = (response) => {
-    sendGoogleToken(response.tokenId);
-  };
-
-
-  const handleSubmit = e => {
-    e.preventDefault()
-    if (!email || !password) {
-      toast.error("Please fill all fields")
-      return
-    }
-
-    setFormData({ ...formData, textChange: 'Submitting' })
-    
-    axios.post(`${process.env.REACT_APP_API_URL}/login`, {
-      email,
-      password
-    })
-    .then(res => {
-      authenticate(res, () => {
-        setFormData({
-          ...formData,
-          email: '',
-          password: '',
-          textChange: 'Submitted'
-        })
-        setTimeout(() => {
-          toast.success(`Hey ${res.data.user.name}, Welcome back!`)
-        },1000)
-        isAuth() && isAuth().role === 'admin' ? history.push('/admin') : history.push('/private')
-      })
-    })
-    .catch(err => {
-      setFormData({
-        ...formData,
-        email: '',
-        password: '',
-        textChange: 'Sign In'
-      })
-      toast.error(err.response.data.error)
-    })
+    sendGoogleToken(response.tokenId)
   }
 
   return (
@@ -134,28 +92,41 @@ const Login = () =>  {
               </div>
               <form
                 className='mx-auto max-w-xs relative'
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(onSubmit)}
               >
                 <input
+                  name='email'
                   className='input-field mt-4'
                   type='email'
                   placeholder='Email'
-                  onChange={handleChange('email')}
-                  value={email}
+                  ref={register({ 
+                    required: true,
+                    pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
+                  })}
                 />
+                { errors.email && 
+                  errors.email.type === "required" && <p className='text-sm text-red-500 pl-4'> This email field is required</p>}
+                { errors.email && 
+                  errors.email.type === "pattern" && <p className='text-sm text-red-500 pl-4'> Please provide a valid email</p>}
+
                 <input
+                  name='password'
                   className='input-field mt-5'
                   type='password'
                   placeholder='Password'
-                  onChange={handleChange('password')}
-                  value={password}
+                  ref={register({ required: true, minLength: 8 })}
                 />
+                {!errors.email && 
+                  errors.password && errors.password.type === "required" && <p className='text-sm text-red-500 pl-4'> This password field is required</p>}
+                {!errors.email && 
+                  errors.password && errors.password.type === "minLength" && <p className='text-sm text-red-500 pl-4'> Password must have at least 8 characters</p>}
+
                 <button
                   type='submit'
                   className='btn btn-submit mt-5'
                 >
                   <i className='fas fa-sign-in-alt  w-6  -ml-2' />
-                  <span className='ml-3'>{textChange}</span>
+                  <span className='ml-3'>Sign In</span>
                 </button>
                 <Link
                   to='/users/password/forget'
