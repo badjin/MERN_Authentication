@@ -14,7 +14,8 @@ module.exports = {
         body: ['Nunito']
       },
       height: theme => ({
-        "content": "calc(100vh - 64px)",
+        "content1": "calc(100vh - 64px)", // Navbar 64px
+        "content2": "calc(100vh - 104px)", // Navbar 64px + Footer 40px
         "screen/2": "50vh",
         "screen/3": "calc(100vh / 3)",
         "screen/4": "calc(100vh / 4)",

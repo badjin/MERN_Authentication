@@ -78,28 +78,28 @@ const Register = () => {
             >
               <div className='mx-auto max-w-xs relative '>
                 <input
-                  className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white'
+                  className='input-field'
                   type='text'
                   placeholder='Name'
                   onChange={handleChange('name')}
                   value={name}
                 />
                 <input
-                  className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5'
+                  className='input-field mt-5'
                   type='email'
                   placeholder='Email'
                   onChange={handleChange('email')}
                   value={email}
                 />
                 <input
-                  className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5'
+                  className='input-field mt-5'
                   type='password'
                   placeholder='Password'
                   onChange={handleChange('password')}
                   value={password}
                 />
                 <input
-                  className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5'
+                  className='input-field mt-5'
                   type='password'
                   placeholder='Confirm Password'
                   onChange={handleChange('confirmPassword')}
@@ -107,7 +107,7 @@ const Register = () => {
                 />
                 <button
                   type='submit'
-                  className='mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none'
+                  className='btn btn-submit mt-5'
                 >
                   <i className='fas fa-user-plus fa 1x w-6  -ml-2' />
                   <span className='ml-3'>{textChange}</span>
@@ -118,10 +118,9 @@ const Register = () => {
                   Or sign with email or social login
                 </div>
               </div>
-              <div className='flex flex-col items-center mb-4'>
+              <div className='flex flex-col items-center mb-8'>
                 <Link
-                  className='w-full max-w-xs font-bold shadow-sm rounded-lg py-3
-                  bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5'
+                  className='btn-shadow mt-5'
                   to='/login'
                   target='_self'
                 >

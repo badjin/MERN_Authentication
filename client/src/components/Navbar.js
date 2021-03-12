@@ -27,8 +27,8 @@ const Navbar = () => {
           {/* secondary nav */}
           
           <div className="hidden md:flex items-center space-x-2">
-            <Link to="/login" className="rounded-full py-2 px-3 uppercase text-xs font-bold tracking-wider cursor-pointer text-primary border-primary md:border-2 hover:bg-primary hover:text-white transition ease-out duration-500">Sign in</Link>
-            <Link to="/register" className="rounded-full py-2 px-3 uppercase text-xs font-bold tracking-wider cursor-pointer text-primary ml-2 border-primary md:border-2 hover:bg-primary hover:text-white transition ease-out duration-500">Sign up</Link>
+            <Link to="/login" className="btn-round text-primary border-primary hover:bg-primary hover:text-white">Sign in</Link>
+            <Link to="/register" className="btn-round text-primary border-primary hover:bg-primary hover:text-white">Sign up</Link>
           </div>
 
           {/* mobile button goes here */}

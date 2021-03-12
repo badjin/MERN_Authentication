@@ -74,14 +74,14 @@ const ResetPassword = ({match}) => {
                 onSubmit={handleSubmit}
               >
                 <input
-                  className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white'
+                  className='input-field'
                   type='password'
                   placeholder='password'
                   onChange={handleChange('password1')}
                   value={password1}
                   />
                   <input
-                  className='w-full mt-5 px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white'
+                  className='input-field mt-5'
                   type='password'
                   placeholder='Confirm password'
                   onChange={handleChange('password2')}
@@ -89,7 +89,7 @@ const ResetPassword = ({match}) => {
                 />
                 <button
                   type='submit'
-                  className='mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none'
+                  className='btn btn-submit mt-5'
                 >
                   <i className='fas fa-sign-in-alt  w-6  -ml-2' />
                   <span className='ml-3'>{textChange}</span>

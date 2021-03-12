@@ -12,6 +12,7 @@ import AdminRoute from './Routes/AdminRoute'
 import Navbar from './components/Navbar'
 import About from './screens/About'
 import Contact from './screens/Contact'
+import Footer from './components/Footer'
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
         <AdminRoute path="/admin" exact component={Admin} />
         <Redirect to='/' />
       </Switch>
+      <Footer />
     </div>
   )
 }
