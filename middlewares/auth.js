@@ -25,7 +25,7 @@ exports.requireSignin = async (req, res, next) => {
       return next(new ErrorResponse('No user found with this id.', 404))
     }
 
-    req.user = user     
+    req.body.id = user._id
     next()
 
   } catch (error) {

@@ -20,10 +20,10 @@ const Navbar = ({ history }) => {
             <div>
               <NavLink
                 to="/" exact
-                className="flex items-center py-5 px-2 text-purple-500 hover:text-gray-100"
+                className="flex items-center py-5 px-2 text-purple-500 hover:text-gray-100 transform hover:scale-125"
                 activeClassName="active-navbar"
               >
-                <img className="h-6 w-6 mr-1 transform hover:scale-125" src={logo} alt="FlowerLogo" />
+                <img className="h-6 w-6 mr-1" src={logo} alt="FlowerLogo" />
                 <span className="font-bold">LilacTV</span>
               </NavLink>
             </div>
@@ -93,9 +93,9 @@ const Navbar = ({ history }) => {
                 stroke="currentColor"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M4 6h16M4 12h16M4 18h16"
                 />
               </svg>
@@ -107,13 +107,13 @@ const Navbar = ({ history }) => {
       {/* mobile menu */}
       <div className="mobile-menu hidden md:hidden">
         <Link
-          href="/about"
+          to="/about"
           className="block py-2 px-4 text-sm hover:bg-gray-200"
         >
           About
         </Link>
         <Link
-          href="/contact"
+          to="/contact"
           className="block py-2 px-4 text-sm hover:bg-gray-200"
         >
           Contact

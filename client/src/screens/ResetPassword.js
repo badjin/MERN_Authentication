@@ -1,61 +1,43 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { useForm } from "react-hook-form"
 import authSvg from '../assests/reset.svg'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 import { isAuth } from '../helpers/auth'
-import { Redirect, useHistory } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
+import InputValidate from '../components/InputValidate'
 
-const ResetPassword = ({match}) => {
-  const [formData, setFormData] = useState({
-    password1: '',
-    password2: '',
-    token: '',
-    textChange: 'Submit'
-  })
+const ResetPassword = ({match, history}) => {
+  const [ token, setToken ] = useState('')
+  const { register, handleSubmit, watch, errors } = useForm()
+  const password = useRef()
+  password.current = watch("password")
 
-  const history = useHistory()
-
-  const { password1, password2, textChange, token } = formData
+  const onSubmit = (data) => {
+    axios
+    .put(`${process.env.REACT_APP_API_URL}/resetpassword`, {
+      newPassword: data.password,
+      resetPasswordToken: token
+    })
+    .then(res => {      
+      setTimeout(() => {
+        toast.success(res.data.message)
+      },1000)
+      history.push('/login')
+    })
+    .catch(err => {
+      toast.error(err.response.data.error)
+    })
+  } 
   
   useEffect(() => {
-    let token = match.params.token
+    const token = match.params.token
     if(token) {
-      setFormData({...formData, token,})
+      setToken(token)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [match.params])
+  }, [])
 
-  const handleChange = text => e => {
-    setFormData({ ...formData, [text]: e.target.value })
-  }
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    if ((password1 === password2) && password1 && password2) {
-      setFormData({ ...formData, textChange: 'Submitting' })
-      axios.put(`${process.env.REACT_APP_API_URL}/resetpassword`, {
-        newPassword: password1,
-        resetPasswordToken: token
-      })
-      .then(res => {
-          setFormData({
-            ...formData,
-            password1: '',
-            password2: '',
-            textChange: 'Submitted'
-          })
-          setTimeout(() => {
-            toast.success(res.data.message)
-          },1000)
-          history.push('/login')
-      })
-      .catch(err => {
-        toast.error(err.response.data.error)
-      })
-    } else {
-      toast.error('Passwords don\'t matches')
-    }
-  }
 
   return (
     <div className='bj-content'>
@@ -71,28 +53,37 @@ const ResetPassword = ({match}) => {
               
               <form
                 className='mx-auto max-w-xs relative '
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(onSubmit)}
               >
                 <input
-                  className='input-field'
-                  type='password'
-                  placeholder='password'
-                  onChange={handleChange('password1')}
-                  value={password1}
-                  />
-                  <input
+                  name='password'
                   className='input-field mt-5'
                   type='password'
-                  placeholder='Confirm password'
-                  onChange={handleChange('password2')}
-                  value={password2}
+                  placeholder='Password'
+                  ref={register({ required: true, minLength: 8 })}
                 />
+                {errors.password && 
+                <InputValidate filedName='password' type={errors.password.type} />}
+
+                <input
+                  name='ConfirmPpassword'
+                  className='input-field mt-5'
+                  type='password'
+                  placeholder='Confirm Password'
+                  ref={register({
+                    required: true,
+                    validate: (value) => value === password.current
+                  })}
+                />
+                {!errors.password && errors.ConfirmPpassword && 
+                <InputValidate filedName='confirm password' type={errors.ConfirmPpassword.type} />}
+
                 <button
                   type='submit'
                   className='btn btn-submit mt-5'
                 >
                   <i className='fas fa-sign-in-alt  w-6  -ml-2' />
-                  <span className='ml-3'>{textChange}</span>
+                  <span className='ml-3'>Submit</span>
                 </button>
               </form>
             </div>

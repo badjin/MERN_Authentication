@@ -15,11 +15,8 @@ exports.register = async (req, res, next) => {
     const firstError = errors.array().map(error => error.msg)[0]
     return next(new ErrorResponse(firstError, 422))
   } else {
-    await User.findOne({email}).exec((err, user) => {
-      if (user) {
-        return next(new ErrorResponse('An account with this email already exist.', 400))
-      }
-    })
+    const user = await User.findOne({email})
+    if(user) return next(new ErrorResponse('An account with this email already exist.', 400))    
   }  
 
   try {
@@ -142,6 +139,10 @@ exports.forgotPassword = async (req, res, next) => {
 
     if(!user){
       return next(new ErrorResponse('This email is not registered.', 404))
+    }
+
+    if (user.googleAccount) {
+      return next(new ErrorResponse('This account should be signen in with Google.', 401))
     }
 
     // Reset Token Gen and add to database hashed (private) version of token

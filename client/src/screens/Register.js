@@ -1,65 +1,27 @@
-import React, { useState } from 'react'
+import React, { useRef } from 'react'
+import { useForm } from "react-hook-form"
 import authSvg from '../assests/auth.svg'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 import { isAuth } from '../helpers/auth'
 import { Redirect, Link } from 'react-router-dom'
+import InputValidate from '../components/InputValidate'
 
-const Register = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    textChange: 'Sign Up'
-  })
+const Register = () => {  
+  const { register, handleSubmit, watch, errors } = useForm()
+  const password = useRef()
+  password.current = watch("password")
 
-  const { name, email, password, confirmPassword, textChange } = formData
-
-  const handleChange = text => e => {
-    setFormData({ ...formData, [text]: e.target.value })
-  }
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    if (name && email && password) {
-      if (password === confirmPassword) {
-        setFormData({ ...formData, textChange: 'Submitting' })   
-        axios
-          .post(`${process.env.REACT_APP_API_URL}/register`, {
-            name,
-            email,
-            password: password
-          })
-          .then(res => {
-            setFormData({
-              ...formData,
-              name: '',
-              email: '',
-              password: '',
-              confirmPassword: '',
-              textChange: 'Submitted'
-            })
-            toast.success(res.data.message)
-          })
-          .catch(err => {
-            setFormData({
-              ...formData,
-              name: '',
-              email: '',
-              password: '',
-              confirmPassword: '',
-              textChange: 'Sign Up'
-            })
-            toast.error(err.response.data.error)
-          })
-      } else {
-        toast.error("Passwords don't matches")
-      }
-    } else {
-      toast.error("Please fill all fields")
-    }
-  }
+  const onSubmit = (data) => {
+    axios
+    .post(`${process.env.REACT_APP_API_URL}/register`, data)
+    .then(res => {      
+      toast.success(res.data.message)
+    })
+    .catch(err => {      
+      toast.error(err.response.data.error)
+    })
+  } 
 
   return (
     <div className='bj-content'>
@@ -74,43 +36,61 @@ const Register = () => {
 
             <form
               className='w-full flex-1 mt-6 text-indigo-500'
-              onSubmit={handleSubmit}
+              onSubmit={handleSubmit(onSubmit)}
             >
               <div className='mx-auto max-w-xs relative '>
                 <input
+                  name='name'
                   className='input-field'
                   type='text'
                   placeholder='Name'
-                  onChange={handleChange('name')}
-                  value={name}
+                  ref={register({ required: true, minLength: 3 })}
                 />
+                {errors.name && 
+                <InputValidate filedName='name' type={errors.name.type} />}
+                
                 <input
+                  name='email'
                   className='input-field mt-5'
                   type='email'
                   placeholder='Email'
-                  onChange={handleChange('email')}
-                  value={email}
+                  ref={register({ 
+                    required: true,
+                    pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
+                  })}
                 />
+                {!errors.name && errors.email && 
+                <InputValidate filedName='email' type={errors.email.type} />}
+
                 <input
+                  name='password'
                   className='input-field mt-5'
                   type='password'
                   placeholder='Password'
-                  onChange={handleChange('password')}
-                  value={password}
+                  ref={register({ required: true, minLength: 8 })}
                 />
+                {!errors.name && !errors.email && errors.password && 
+                <InputValidate filedName='password' type={errors.password.type} />}
+
                 <input
+                  name='ConfirmPpassword'
                   className='input-field mt-5'
                   type='password'
                   placeholder='Confirm Password'
-                  onChange={handleChange('confirmPassword')}
-                  value={confirmPassword}
+                  ref={register({
+                    required: true,
+                    validate: (value) => value === password.current
+                  })}
                 />
+                {!errors.name && !errors.email && !errors.password && errors.ConfirmPpassword && 
+                <InputValidate filedName='confirm password' type={errors.ConfirmPpassword.type} />}
+
                 <button
                   type='submit'
                   className='btn btn-submit mt-5'
                 >
                   <i className='fas fa-user-plus fa 1x w-6  -ml-2' />
-                  <span className='ml-3'>{textChange}</span>
+                  <span className='ml-3'>Sign Up</span>
                 </button>
               </div>
               <div className='my-6 border-b text-center'>

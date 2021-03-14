@@ -19,7 +19,7 @@ app.use('/api', require('./routes/user.route'))
 app.use((req, res) => {
   res.status(404).json({
       success: false,
-      msg: "Page not founded"
+      error: "Page not founded"
   })
 })
 

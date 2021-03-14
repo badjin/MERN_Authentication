@@ -1,48 +1,26 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useForm } from "react-hook-form"
 import authSvg from '../assests/forget.svg'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
-// import { text } from 'express'
 import { isAuth } from '../helpers/auth'
 import { Redirect } from 'react-router-dom'
+import InputValidate from '../components/InputValidate'
 
 const ForgetPassword = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    textChange: 'Submit'
-  })
+  const { register, handleSubmit, errors } = useForm()
 
-  const { email, textChange } = formData
-
-  const handleChange = text => e => {
-    setFormData({ ...formData, [text]: e.target.value })
-  }
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    if (email) {
-      setFormData({ ...formData, textChange: 'Submitting' })
-      axios
-        .post(`${process.env.REACT_APP_API_URL}/forgotpassword`, {
-          email
-        })
-        .then(res => {
-          
-            setFormData({
-              ...formData,
-              email: '',
-              textChange: 'Submitted'
-            })
-            toast.success(res.data.message)
-          
-        })
-        .catch(err => {
-          toast.error(err.response.data.error)
-        })
-    } else {
-      toast.error('Please fill all fields')
-    }
-  }
+  const onSubmit = (data) => {
+    axios
+    .post(`${process.env.REACT_APP_API_URL}/forgotpassword`, data)
+    .then(res => {      
+      toast.success(res.data.message)
+    })
+    .catch(err => {      
+      toast.error(err.response.data.error)
+    })
+  } 
+  
 
   return (
     <div className='bj-content'>
@@ -58,21 +36,27 @@ const ForgetPassword = () => {
               
               <form
                 className='mx-auto max-w-xs relative '
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(onSubmit)}
               >
                 <input
-                  className='input-field'
+                  name='email'
+                  className='input-field mt-4'
                   type='email'
                   placeholder='Email'
-                  onChange={handleChange('email')}
-                  value={email}
+                  ref={register({ 
+                    required: true,
+                    pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
+                  })}
                 />
+                {errors.email && 
+                <InputValidate filedName='email' type={errors.email.type} />}
+
                 <button
                   type='submit'
                   className='btn btn-submit mt-5'
                 >
                   <i className='fas fa-sign-in-alt  w-6  -ml-2' />
-                  <span className='ml-3'>{textChange}</span>
+                  <span className='ml-3'>Submit</span>
                 </button>
               </form>
             </div>

@@ -7,12 +7,12 @@ import { authenticate, isAuth } from '../helpers/auth'
 import { Link, Redirect } from 'react-router-dom'
 import { GoogleLogin } from 'react-google-login'
 import googleLogo from '../assests/google-icon.svg'
+import InputValidate from '../components/InputValidate'
 
 const Login = ({history}) =>  {
   const { register, handleSubmit, errors } = useForm()
 
   const onSubmit = (data) => {
-    console.log(data)
     axios
     .post(`${process.env.REACT_APP_API_URL}/login`, data)
     .then(res => {      
@@ -37,7 +37,7 @@ const Login = ({history}) =>  {
         setTimeout(() => {
           toast.success(`Hey ${res.data.user.name}, Welcome back!`)
         },1000)
-        isAuth() && isAuth().role === 'admin' ? history.push('/admin') : history.push('/private')            
+        isAuth() && isAuth().role === 'admin' ? history.push('/private') : history.push('/private')            
       })
     }).catch((err) => {
       toast.error(err.response.data.error)
@@ -101,13 +101,11 @@ const Login = ({history}) =>  {
                   placeholder='Email'
                   ref={register({ 
                     required: true,
-                    pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
+                    pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
                   })}
                 />
-                { errors.email && 
-                  errors.email.type === "required" && <p className='text-sm text-red-500 pl-4'> This email field is required</p>}
-                { errors.email && 
-                  errors.email.type === "pattern" && <p className='text-sm text-red-500 pl-4'> Please provide a valid email</p>}
+                {errors.email && 
+                <InputValidate filedName='email' type={errors.email.type} />}
 
                 <input
                   name='password'
@@ -116,10 +114,8 @@ const Login = ({history}) =>  {
                   placeholder='Password'
                   ref={register({ required: true, minLength: 8 })}
                 />
-                {!errors.email && 
-                  errors.password && errors.password.type === "required" && <p className='text-sm text-red-500 pl-4'> This password field is required</p>}
-                {!errors.email && 
-                  errors.password && errors.password.type === "minLength" && <p className='text-sm text-red-500 pl-4'> Password must have at least 8 characters</p>}
+                {!errors.email && errors.password && 
+                <InputValidate filedName='password' type={errors.password.type} />}
 
                 <button
                   type='submit'

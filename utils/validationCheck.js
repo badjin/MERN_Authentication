@@ -5,7 +5,7 @@ const {
 exports.registerValidator = [
     check('name', "Please add a user's name").notEmpty()
     .isLength({
-        min: 4,
+        min: 3,
         max: 32
     }).withMessage('Name must be between 3 to 32 characters'),
 

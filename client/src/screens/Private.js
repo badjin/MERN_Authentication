@@ -1,17 +1,34 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { useForm } from "react-hook-form"
 import authSvg from '../assests/update.svg'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 import { updateUser, isAuth, getCookie, signout } from '../helpers/auth'
+import InputValidate from '../components/InputValidate'
 
 const Private = ({ history }) => {
+  const { register, handleSubmit, watch, errors, setValue, clearErrors } = useForm()
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    password1: '',
-    textChange: 'Update',
-    role: ''
+    email: ''
   })
+  const [isNameChanged, setIsNameChanged] = useState(false)
+  const [isPasswordEnable, setIsPasswordEnable] = useState(false)
+  const [isPasswordChange, setIsPasswordChange] = useState(false)
+
+
+  const { name, email } = formData
+  const password = useRef()
+  password.current = watch("password")
+
+  useEffect(() => {    
+    setIsNameChanged(name !== isAuth().name)
+  }, [name])
+
+  useEffect(() => {    
+    setIsPasswordChange(isPasswordEnable)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[isPasswordEnable])
 
   useEffect(() => {
     loadProfile()
@@ -26,8 +43,8 @@ const Private = ({ history }) => {
         }
       })
       .then(res => {
-        const { role, name, email } = res.data.user
-        setFormData({ ...formData, role, name, email })
+        const { name, email } = res.data.user
+        setFormData({ ...formData, name, email })
       })
       .catch(err => {
         setTimeout(() => {
@@ -41,36 +58,39 @@ const Private = ({ history }) => {
       })
   }
 
-  const { name, email, password1, textChange, role } = formData
+
+  const onSubmit = (data) => {
+    setValue('password', undefined)
+    setValue('ConfirmPpassword', undefined)
+    clearErrors('password')
+    clearErrors('ConfirmPpassword')
+
+    let payload = {}
+    if(isPasswordChange) payload = {name: data.name, password: data.password}
+    else payload = {name: data.name}
+
+    const token = getCookie('token')
+
+    axios
+    .put(`${process.env.REACT_APP_API_URL}/user/update`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(res => {      
+      updateUser(res, () => {
+        toast.success('Profile Updated Successfully')
+      })
+    })
+    .catch(err => {      
+      toast.error(err.response.data.error)
+    })
+  }
+
   const handleChange = text => e => {
     setFormData({ ...formData, [text]: e.target.value })
   }
-
-  const handleSubmit = e => {
-    const token = getCookie('token')
-    console.log(token)
-    e.preventDefault()
-    setFormData({ ...formData, textChange: 'Submitting' })
-    axios.put(`${process.env.REACT_APP_API_URL}/user/update`,{
-        name,
-        email,
-        password: password1
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      .then(res => {
-        updateUser(res, () => {
-          toast.success('Profile Updated Successfully')
-          setFormData({ ...formData, textChange: 'Update' })
-        })
-      })
-      .catch(err => {
-        console.log(err.response)
-      })
-  }
+  
 
   return (
     <div className='bj-content'>
@@ -84,61 +104,100 @@ const Private = ({ history }) => {
 
             <form
               className='w-full mt-6 flex-1 text-indigo-500'
-              onSubmit={handleSubmit}
+              onSubmit={handleSubmit(onSubmit)}
             >
-              <div className='mx-auto max-w-xs relative '>
+              <div className='mx-auto max-w-xs relative '>                
                 <input
                   disabled
                   className='input-field text-gray-400'
-                  type='text'
-                  placeholder='Role'
-                  value={role}
-                />
-                <input
-                  className='input-field text-gray-400 mt-5'
                   type='email'
                   placeholder='Email'
-                  disabled
+                  onChange={(e) => e.target.value}
                   value={email}
                 />
                 <input
+                  name='name'
                   className='input-field mt-5'
                   type='text'
                   placeholder='Name'
                   onChange={handleChange('name')}
                   value={name}
+                  ref={register({ required: true, minLength: 3 })}
                 />
+                {errors.name && 
+                <InputValidate filedName='name' type={errors.name.type} />}
+
+                <button
+                  className='btn-shadow mt-5'
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if(!isPasswordEnable) {
+                      setValue('password', undefined)
+                      setValue('ConfirmPpassword', undefined)
+                      clearErrors('password')
+                      clearErrors('ConfirmPpassword')
+                    }
+                    setIsPasswordEnable(!isPasswordEnable)
+                  }}
+                >
+                  <i className={`fas ${isPasswordEnable ? 'fa-unlock' : 'fa-lock'} fa 1x w-6  -ml-2`} />
+                  <span className='ml-3'>Password Change</span>
+                </button>
 
                 <input
-                  className='input-field mt-5'
+                  name='password'
+                  className={`input-field mt-5 ${!isPasswordEnable && 'hidden'}`}
                   type='password'
                   placeholder='Password'
-                  onChange={handleChange('password1')}
-                  value={password1}
+                  ref={
+                    register(
+                      isPasswordEnable 
+                      ? { required: true, minLength: 8 }
+                      : {}
+                    )
+                  }
                 />
-                <button
-                  type='submit'
-                  className='btn btn-submit mt-5'
-                >
-                  <i className='fas fa-user-plus fa 1x w-6  -ml-2' />
-                  <span className='ml-3'>{textChange}</span>
-                </button>
-              </div>
-              <div className='my-4 border-b text-center'>
-                <div className='leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2'>
-                  Go To Home
+                {!errors.name && errors.password && isPasswordEnable &&
+                <InputValidate filedName='password' type={errors.password.type} />}
+
+                <input
+                  name='ConfirmPpassword'
+                  className={`input-field mt-5 ${!isPasswordEnable && 'hidden'}`}
+                  type='password'
+                  placeholder='Confirm Password'
+                  ref={
+                    register(
+                      isPasswordEnable 
+                      ? { 
+                          required: true,
+                          validate: (value) => value === password.current
+                        }
+                      : {}
+                    )
+                  }
+                />
+                {!errors.name && !errors.password && errors.ConfirmPpassword && isPasswordEnable &&
+                <InputValidate filedName='confirm password' type={errors.ConfirmPpassword.type} />}
+                <div className="flex justify-between space-x-2">
+                  <button
+                    type='submit'
+                    disabled={!isNameChanged && !isPasswordChange}
+                    className='btn btn-submit mt-5'
+                  >
+                    <i className={`fas fa-user-plus fa 1x w-6 ${(!isNameChanged && !isPasswordChange) && 'text-gray-400'} -ml-2`} />
+                    <span className={`ml-3 ${(!isNameChanged && !isPasswordChange) && 'text-gray-400'}`}>Update</span>
+                  </button>
+                  <button
+                    className='btn btn-submit mt-5'
+                    onClick={() => {
+                      history.push('/')
+                    }}
+                  >
+                    <i className='fas fa-sign-in-alt fa 1x w-6  -ml-2' />
+                    <span className='ml-3'>Home</span>
+                  </button>
                 </div>
-              </div>
-              <div className='flex flex-col items-center'>
-                <a
-                  className='btn-shadow mt-5'
-                  href='/'
-                  target='_self'
-                >
-                  <i className='fas fa-sign-in-alt fa 1x w-6  -ml-2 text-indigo-500' />
-                  <span className='ml-4'>Home</span>
-                </a>
-              </div>
+              </div>              
             </form>
           </div>
         </div>
