@@ -46,53 +46,51 @@ function Activation({match}) {
   }
 
   return (
-    <div className='bj-content'>
+    <div className='bj-container'>
       <ToastContainer />
-      <div className='bj-container'>
-        <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
-          <div className='mt-4 flex flex-col items-center'>
-            <h1 className='text-2xl xl:text-3xl font-extrabold'>
-              Welcome {name}
-            </h1>
+      <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
+        <div className='mt-4 flex flex-col items-center'>
+          <h1 className='text-2xl xl:text-3xl font-extrabold'>
+            Welcome {name}
+          </h1>
 
-            <form
-              className='w-full flex-1 mt-8 text-indigo-500'
-              onSubmit={handleSubmit}
-            >
-              <div className='mx-auto max-w-xs relative '>
-                <button
-                  type='submit'
-                  className='btn btn-submit mt-5'
-                >
-                  <i className='fas fa-user-plus fa 1x w-6  -ml-2' />
-                  <span className='ml-3'>Activate</span>
-                </button>
+          <form
+            className='w-full flex-1 mt-8 text-indigo-500'
+            onSubmit={handleSubmit}
+          >
+            <div className='mx-auto max-w-xs relative '>
+              <button
+                type='submit'
+                className='btn btn-submit mt-5'
+              >
+                <i className='fas fa-user-plus fa 1x w-6  -ml-2' />
+                <span className='ml-3'>Activate</span>
+              </button>
+            </div>
+            <div className='my-6 border-b text-center'>
+              <div className='leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2'>
+                Or sign up again
               </div>
-              <div className='my-6 border-b text-center'>
-                <div className='leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2'>
-                  Or sign up again
-                </div>
-              </div>
-              <div className='flex flex-col items-center'>
-                <a
-                  className='btn-shadow mt-5'
-                  href='/register'
-                  target='_self'
-                >
-                  <i className='fas fa-sign-in-alt fa 1x w-6  -ml-2 text-indigo-500' />
-                  <span className='ml-4'>Sign Up</span>
-                </a>
-              </div>
-            </form>
-          </div>
+            </div>
+            <div className='flex flex-col items-center'>
+              <a
+                className='btn-shadow mt-5'
+                href='/register'
+                target='_self'
+              >
+                <i className='fas fa-sign-in-alt fa 1x w-6  -ml-2 text-indigo-500' />
+                <span className='ml-4'>Sign Up</span>
+              </a>
+            </div>
+          </form>
         </div>
-        <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
-          <div
-            className='m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat'
-            style={{ backgroundImage: `url(${authSvg})` }}
-          ></div>
-        </div>
-      </div>      
+      </div>
+      <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
+        <div
+          className='m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat'
+          style={{ backgroundImage: `url(${authSvg})` }}
+        ></div>
+      </div>
     </div>
   )
 }

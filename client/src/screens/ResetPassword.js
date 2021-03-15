@@ -40,62 +40,60 @@ const ResetPassword = ({match, history}) => {
 
 
   return (
-    <div className='bj-content'>
+    <div className='bj-container'>
       {isAuth() && <Redirect to='/' />}
       <ToastContainer />
-      <div className='bj-container'>
-        <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
-          <div className='mt-4 flex flex-col items-center'>
-            <h1 className='text-2xl xl:text-3xl font-extrabold'>
-              Reset Your Password
-            </h1>
-            <div className='w-full flex-1 mt-8 text-indigo-500'>
-              
-              <form
-                className='mx-auto max-w-xs relative '
-                onSubmit={handleSubmit(onSubmit)}
+      <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
+        <div className='mt-4 flex flex-col items-center'>
+          <h1 className='text-2xl xl:text-3xl font-extrabold'>
+            Reset Your Password
+          </h1>
+          <div className='w-full flex-1 mt-8 text-indigo-500'>
+            
+            <form
+              className='mx-auto max-w-xs relative '
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <input
+                name='password'
+                className='input-field mt-5'
+                type='password'
+                placeholder='Password'
+                ref={register({ required: true, minLength: 8 })}
+              />
+              {errors.password && 
+              <InputValidate filedName='password' type={errors.password.type} />}
+
+              <input
+                name='ConfirmPpassword'
+                className='input-field mt-5'
+                type='password'
+                placeholder='Confirm Password'
+                ref={register({
+                  required: true,
+                  validate: (value) => value === password.current
+                })}
+              />
+              {!errors.password && errors.ConfirmPpassword && 
+              <InputValidate filedName='confirm password' type={errors.ConfirmPpassword.type} />}
+
+              <button
+                type='submit'
+                className='btn btn-submit mt-5'
               >
-                <input
-                  name='password'
-                  className='input-field mt-5'
-                  type='password'
-                  placeholder='Password'
-                  ref={register({ required: true, minLength: 8 })}
-                />
-                {errors.password && 
-                <InputValidate filedName='password' type={errors.password.type} />}
-
-                <input
-                  name='ConfirmPpassword'
-                  className='input-field mt-5'
-                  type='password'
-                  placeholder='Confirm Password'
-                  ref={register({
-                    required: true,
-                    validate: (value) => value === password.current
-                  })}
-                />
-                {!errors.password && errors.ConfirmPpassword && 
-                <InputValidate filedName='confirm password' type={errors.ConfirmPpassword.type} />}
-
-                <button
-                  type='submit'
-                  className='btn btn-submit mt-5'
-                >
-                  <i className='fas fa-sign-in-alt  w-6  -ml-2' />
-                  <span className='ml-3'>Submit</span>
-                </button>
-              </form>
-            </div>
+                <i className='fas fa-sign-in-alt  w-6  -ml-2' />
+                <span className='ml-3'>Submit</span>
+              </button>
+            </form>
           </div>
         </div>
-        <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
-          <div
-            className='m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat'
-            style={{ backgroundImage: `url(${authSvg})` }}
-          ></div>
-        </div>
-      </div>      
+      </div>
+      <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
+        <div
+          className='m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat'
+          style={{ backgroundImage: `url(${authSvg})` }}
+        ></div>
+      </div>
     </div>
   )
 }

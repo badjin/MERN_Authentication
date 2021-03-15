@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react"
 import { NavLink, Link } from "react-router-dom"
 import logo from "../assests/flower.png"
-import { signout } from "../helpers/auth"
+import { isAuth, signout } from "../helpers/auth"
 import { toast } from "react-toastify"
 
-const Navbar = ({ isLogined }) => {
+const Navbar = () => {
   const [isLogin, setIsLogin] = useState(false)
 
   useEffect(() => {
-    setIsLogin(isLogined)
-  }, [isLogined])
+    setIsLogin(isAuth())
+  }, [])
 
   return (
     <nav className="h-16" style={{ background: 'linear-gradient(to left, #F0F4FD, #A1A3BA)' }}>
