@@ -13,11 +13,19 @@ import Navbar from './components/Navbar'
 import About from './screens/About'
 import Contact from './screens/Contact'
 import Footer from './components/Footer'
+import { isAuth } from './helpers/auth'
+// import React, { useState, useEffect } from "react"
 
 const App = () => {
+  // const [isLogin, setIsLogin] = useState(false)
+
+  // useEffect(() => {
+  //   setIsLogin(isAuth())
+  // }, [isAuth()])
+
   return (
     <div>
-      <Navbar />
+      <Navbar isLogined={isAuth()}/>
       <Switch>
         <Route path='/' exact render={props => <Home {...props} /> } />
         <Route path='/register' render={props => <Register {...props} /> } />

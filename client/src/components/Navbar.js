@@ -1,15 +1,15 @@
-import React from "react";
-import { NavLink, Link } from "react-router-dom";
-import logo from "../assests/flower.png";
-import { signout, isAuth } from "../helpers/auth";
-import { toast } from "react-toastify";
+import React, { useState, useEffect } from "react"
+import { NavLink, Link } from "react-router-dom"
+import logo from "../assests/flower.png"
+import { signout } from "../helpers/auth"
+import { toast } from "react-toastify"
 
-const Navbar = ({ history }) => {
-  // const [isLogin, setIsLogin] = useState(false);
+const Navbar = ({ isLogined }) => {
+  const [isLogin, setIsLogin] = useState(false)
 
-  // useEffect(() => {
-  //   setIsLogin(isAuth() ? true : false);
-  // }, [isAuth()]);
+  useEffect(() => {
+    setIsLogin(isLogined)
+  }, [isLogined])
 
   return (
     <nav className="h-16" style={{ background: 'linear-gradient(to left, #F0F4FD, #A1A3BA)' }}>
@@ -50,21 +50,24 @@ const Navbar = ({ history }) => {
           {/* secondary nav */}
 
           <div className="hidden md:flex items-center space-x-2">
-            {isAuth() ? (
-              <button
+            {isLogin 
+            ? (
+              <Link
+                to='/'
                 onClick={() => {
                   signout(() => {
+                    setIsLogin(false)
                     setTimeout(() => {
-                      toast.success("Signed out Successfully");
-                    }, 500);
-                    history.push("/");
-                  });
+                      toast.success("Signed out Successfully")
+                    }, 500)
+                  })                  
                 }}
                 className="btn-round text-primary border-primary hover:bg-primary hover:text-white"
               >
                 Sign out
-              </button>
-            ) : (
+              </Link>
+            ) 
+            : (
               <>
                 <Link
                   to="/login"
