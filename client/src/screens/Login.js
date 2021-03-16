@@ -2,7 +2,6 @@ import React from 'react'
 import { useForm } from "react-hook-form"
 import authSvg from '../assests/auth.svg'
 import { ToastContainer, toast } from 'react-toastify'
-import axios from 'axios'
 import { authenticate, isAuth } from '../helpers/auth'
 import { Link, Redirect } from 'react-router-dom'
 import { GoogleLogin } from 'react-google-login'
@@ -11,7 +10,7 @@ import InputValidate from '../components/InputValidate'
 import { connect } from 'react-redux'
 import { loginUser } from '../redux'
 
-const Login = ({history, user, loginUser}) =>  {
+const Login = ({history, loginUser}) =>  {
   const { register, handleSubmit, errors } = useForm()
 
   const setAuth = (res) => {
@@ -41,11 +40,11 @@ const Login = ({history, user, loginUser}) =>  {
       {isAuth() && <Redirect to='/' /> }
       <ToastContainer />
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
-        <div className='mt-4 flex flex-col items-center'>
+        <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>
             Sign In
           </h1>
-          <div className='w-full flex-1 mt-8 text-indigo-500'>
+          <div className='w-full flex-1 my-6 text-indigo-500'>
             <div className='flex flex-col items-center'>
               <GoogleLogin
                 clientId={`${process.env.REACT_APP_GOOGLE_CLIENT}`}
@@ -132,7 +131,6 @@ const Login = ({history, user, loginUser}) =>  {
 }
 
 const mapStateToProps = ({user}) => {
-  // console.log(user)
   return {
     user
   }

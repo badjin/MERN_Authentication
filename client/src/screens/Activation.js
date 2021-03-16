@@ -49,13 +49,13 @@ function Activation({match}) {
     <div className='bj-container'>
       <ToastContainer />
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
-        <div className='mt-4 flex flex-col items-center'>
+        <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>
             Welcome {name}
           </h1>
 
           <form
-            className='w-full flex-1 mt-8 text-indigo-500'
+            className='w-full flex-1 my-8 text-indigo-500'
             onSubmit={handleSubmit}
           >
             <div className='mx-auto max-w-xs relative '>

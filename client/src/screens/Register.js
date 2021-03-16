@@ -28,16 +28,15 @@ const Register = () => {
       {isAuth() && <Redirect to='/' />}
       <ToastContainer />
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
-        <div className='mt-4 flex flex-col items-center'>
+        <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>
             Sign Up
           </h1>
-
-          <form
-            className='w-full flex-1 mt-6 text-indigo-500'
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className='mx-auto max-w-xs relative '>
+          <div className='w-full flex-1 my-6 text-indigo-500'>
+            <form
+              className='mx-auto max-w-xs relative'
+              onSubmit={handleSubmit(onSubmit)}
+            >             
               <input
                 name='name'
                 className='input-field'
@@ -85,29 +84,30 @@ const Register = () => {
               <InputValidate filedName='confirm password' type={errors.ConfirmPpassword.type} />}
 
               <button
-                type='submit'
-                className='btn btn-submit mt-5'
-              >
-                <i className='fas fa-user-plus fa 1x w-6  -ml-2' />
-                <span className='ml-3'>Sign Up</span>
-              </button>
-            </div>
-            <div className='my-6 border-b text-center'>
-              <div className='leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2'>
-                Or sign with email or social login
+                  type='submit'
+                  className='btn btn-submit mt-5'
+                >
+                  <i className='fas fa-user-plus fa 1x w-6  -ml-2' />
+                  <span className='ml-3'>Sign Up</span>
+                </button>
+              
+              <div className='my-6 border-b text-center'>
+                <div className='leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2'>
+                  Or sign with email or social login
+                </div>
               </div>
-            </div>
-            <div className='flex flex-col items-center mb-6'>
-              <Link
-                className='btn-shadow mt-5'
-                to='/login'
-                target='_self'
-              >
-                <i className='fas fa-sign-in-alt fa 1x w-6  -ml-2 text-indigo-500' />
-                <span className='ml-4'>Sign In</span>
-              </Link>
-            </div>
-          </form>
+              <div className='flex flex-col items-center mb-6'>
+                <Link
+                  className='btn-shadow mt-5'
+                  to='/login'
+                  target='_self'
+                >
+                  <i className='fas fa-sign-in-alt fa 1x w-6  -ml-2 text-indigo-500' />
+                  <span className='ml-4'>Sign In</span>
+                </Link>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
       <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>

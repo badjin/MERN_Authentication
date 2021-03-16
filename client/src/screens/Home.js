@@ -1,20 +1,29 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { signout } from '../helpers/auth'
 import { ToastContainer, toast } from 'react-toastify'
+import { connect } from 'react-redux'
+import { logoutUser } from '../redux'
 
-const Home = ({ history }) => {
+const Home = ({ history, logoutUser }) => {
+  const LogoutUser = () => {
+    logoutUser()
+    .then(() => {
+      toast.success('Signed out Successfully');
+      history.push('/')
+    })
+  }
+
   return (    
     <div className='bj-container'>
       <ToastContainer />
       <div className='lg:w-1/2 xl:w-8/12 p-6 sm:p-6'>
-        <div className='mt-4 flex flex-col items-center'>
+        <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-2xl font-extrabold  text-center '>
             Ultimate Auth with Email & Google with diferent roles,
             email verification & Forget passwored{' '}
           </h1>
-          <div className='w-full flex-1 text-indigo-500'>
-            <div className='my-8 border-b text-center'>
+          <div className='w-full my-6 flex-1 text-indigo-500'>
+            <div className='mb-8 border-b text-center'>
               <div className='leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2'>
                 Features
               </div>
@@ -49,12 +58,7 @@ const Home = ({ history }) => {
                 <span className='ml-3'>Admin Dashbaord</span>
               </Link>
               <button
-                onClick={() => {
-                  signout(() => {
-                    toast.success('Signed out Successfully');
-                    history.push('/')
-                  })
-                }}
+                onClick={LogoutUser()}
                 className='btn mt-5 bg-pink-500 text-gray-100 hover:bg-pink-700'
               >
                 <i className='fas fa-sign-out-alt  w-6  -ml-2' />
@@ -68,4 +72,14 @@ const Home = ({ history }) => {
   )
 }
 
-export default Home
+const mapStateToProps = ({user}) => {
+  return {
+    user
+  }
+}
+
+const mapDispatchToProps = {  
+  logoutUser
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )(Home)

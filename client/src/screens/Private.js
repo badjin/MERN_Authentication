@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import authSvg from '../assests/update.svg'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
-import { updateUser, isAuth, getCookie, signout } from '../helpers/auth'
+import { updateUser, isAuth, getCookie } from '../helpers/auth'
 import InputValidate from '../components/InputValidate'
 
 const Private = ({ history }) => {
@@ -98,13 +98,13 @@ const Private = ({ history }) => {
     <div className='bj-container'>
       <ToastContainer />
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
-        <div className='mt-4 flex flex-col items-center'>
+        <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>
             Profile Update
           </h1>
 
           <form
-            className='w-full mt-6 flex-1 text-indigo-500'
+            className='w-full my-6 flex-1 text-indigo-500'
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className='mx-auto max-w-xs relative '>                

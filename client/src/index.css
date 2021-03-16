@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 .bj-content {
-  @apply h-content2 bg-gray-100 text-gray-900 flex justify-center;
+  @apply min-h-full bg-gray-100 text-gray-900 flex justify-center;
 }
 
 .bj-container{
-  @apply max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1;
+  @apply max-w-screen-xl m-0 lg:m-10 xl:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1;
 }
 
 .btn {

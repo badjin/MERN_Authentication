@@ -15,8 +15,15 @@ import NavBar from './components/Navbar'
 import About from './screens/About'
 import Contact from './screens/Contact'
 import Footer from './components/Footer'
+import { isAuth } from './helpers/auth'
+
 
 const App = () => {
+
+  const initializeUserInfo = () => {
+    if (!isAuth()) return
+  }
+
   return (
     <Suspense fallback={(<div>Loading...</div>)}>
       <NavBar />

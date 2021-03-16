@@ -1,7 +1,7 @@
 import {
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
-  LOGIN_USER,
+  LOGOUT_SUCCESS,
   REGISTER_USER,
   GET_USER,
   LOGOUT_USER
@@ -31,6 +31,10 @@ const userReducer = (state=initialState, action) => {
             errorMessage: action.payload.error, 
             isLogin: action.payload.success 
           }
+      case LOGOUT_SUCCESS:
+        return { 
+          state: initialState
+        }
       case GET_USER:
           return {...state, userData: action.payload }
       case LOGOUT_USER:

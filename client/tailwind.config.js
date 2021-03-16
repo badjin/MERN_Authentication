@@ -3,6 +3,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      minHeight: {
+        'full': 'calc(100vh - 104px)',
+      },
       colors: {
         primary: '#FF6363',
         secondary: {
