@@ -21,7 +21,7 @@ const Home = ({ history }) => {
         <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-2xl font-extrabold  text-center '>
             Ultimate Auth with Email & Google with diferent roles,
-            email verification & Forget passwored{' '}
+            email verification & Forget password
           </h1>
           <div className='w-full my-6 flex-1 text-indigo-500'>
             <div className='mb-8 border-b text-center'>
