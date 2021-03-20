@@ -1,21 +1,20 @@
 import React from "react"
-import { NavLink, Link } from "react-router-dom"
+import { NavLink, Link, useHistory } from "react-router-dom"
 import logo from "../assests/flower.png"
 import { toast } from "react-toastify"
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { logoutUser } from '../redux'
 
-const Navbar = ({ isLogin, logoutUser }) => {
-  // const [isLogin, setIsLogined] = useState(false)
+const Navbar = () => {
+  const isLogin = useSelector(state => state.user.isLogin)
+  const dispatch = useDispatch()
 
-  // useEffect(() => {
-  //   setIsLogined(true)
-  // }, [])
-
-  const LogoutUser = () => {
-    logoutUser()
+  const history = useHistory()
+  const logout = () => {
+    dispatch(logoutUser())
     .then(() => {
       toast.success('Signed out Successfully')
+      history.push('/')
     })
   }
 
@@ -62,7 +61,7 @@ const Navbar = ({ isLogin, logoutUser }) => {
             ? (
               <Link
                 to='/'
-                onClick={LogoutUser()}
+                onClick={logout}
                 className="btn-round text-primary border-primary hover:bg-primary hover:text-white"
               >
                 Sign out
@@ -127,14 +126,5 @@ const Navbar = ({ isLogin, logoutUser }) => {
   )
 }
 
-const mapStateToProps = ({user}) => {
-  return {
-    isLogin: user.isLogin
-  }
-}
 
-const mapDispatchToProps = {  
-  logoutUser  
-}
-
-export default connect( mapStateToProps, mapDispatchToProps )(Navbar)
+export default Navbar

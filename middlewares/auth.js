@@ -29,7 +29,7 @@ exports.requireSignin = async (req, res, next) => {
     next()
 
   } catch (error) {
-    return next(new ErrorResponse('No authorized to access this route.', 401))
+    return next(new ErrorResponse('Token has expired. Please login again.', 401))
   }
 }
 

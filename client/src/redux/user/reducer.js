@@ -2,9 +2,11 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
   LOGOUT_SUCCESS,
-  REGISTER_USER,
-  GET_USER,
-  LOGOUT_USER
+  GETDATA_SUCCESS,
+  SEND_ACTIVATION_EMAIL,
+  SEND_ACTIVATION_EMAIL_FAILURE,
+  ACTIVATION_USER,
+  ACTIVATION_USER_FAILURE
 } from './types';
 
 const initialState = {
@@ -16,31 +18,37 @@ const initialState = {
 
 const userReducer = (state=initialState, action) => {
   switch(action.type){
-      case REGISTER_USER:
-          return {...state, register: action.payload }
+      case SEND_ACTIVATION_EMAIL:
+      case SEND_ACTIVATION_EMAIL_FAILURE:
+        return { 
+          state: initialState
+        }
+      
+      case ACTIVATION_USER:
+      case GETDATA_SUCCESS:        
       case LOGIN_SUCCESS:
-          return { 
-            ...state, 
-            userData: action.payload.user, 
-            isLogin: action.payload.success,
-            errorMessage: ''
-          }
+        return { 
+          ...state, 
+          userData: action.payload.user, 
+          isLogin: action.payload.success,
+          errorMessage: ''
+        }
+
+      case ACTIVATION_USER_FAILURE:
       case LOGIN_FAILURE:
-          return { 
-            ...state, 
-            errorMessage: action.payload.error, 
-            isLogin: action.payload.success 
-          }
+        return { 
+          ...state, 
+          errorMessage: action.payload.error, 
+          isLogin: action.payload.success 
+        }
+
       case LOGOUT_SUCCESS:
         return { 
           state: initialState
         }
-      case GET_USER:
-          return {...state, userData: action.payload }
-      case LOGOUT_USER:
-          return {...state, isLogin: false}
+      
       default:
-          return state;
+        return state;
   }
 }
 

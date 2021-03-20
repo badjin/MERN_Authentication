@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useForm } from "react-hook-form"
+import { useSelector, useDispatch } from 'react-redux'
 import authSvg from '../assests/update.svg'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import axios from 'axios'
-import { updateUser, isAuth, getCookie } from '../helpers/auth'
-import InputValidate from '../components/InputValidate'
 
-const Private = ({ history }) => {
+import { getLoginInfo } from '../helpers/auth'
+import InputValidate from '../components/InputValidate'
+import { updateUserData } from '../redux'
+
+const Profile = ({ history }) => {
+  const user = useSelector(state => state.user)
+  const dispatch = useDispatch()
+
   const { register, handleSubmit, watch, errors, setValue, clearErrors } = useForm()
   const [formData, setFormData] = useState({
     name: '',
@@ -17,18 +23,18 @@ const Private = ({ history }) => {
   const [isPasswordChange, setIsPasswordChange] = useState(false)
 
 
-  const { name, email } = formData
+  let { name, email } = formData
   const password = useRef()
   password.current = watch("password")
 
   useEffect(() => {    
-    setIsNameChanged(name !== isAuth().name)
+    if(user.isLogin) setIsNameChanged(name !== user.userData.name)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name])
 
   useEffect(() => {    
     setIsPasswordChange(isPasswordEnable)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[isPasswordEnable])
+  }, [isPasswordEnable])
 
   useEffect(() => {
     loadProfile()
@@ -36,28 +42,10 @@ const Private = ({ history }) => {
   }, [])
 
   const loadProfile = () => {
-      const { name, email } = isAuth()
+    if(user.isLogin){
+      const { name, email } = user.userData
       setFormData({ ...formData, name, email })
-    // const token = getCookie('token')
-    // axios.get(`${process.env.REACT_APP_API_URL}/user/${isAuth().id}`, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`
-    //     }
-    //   })
-    //   .then(res => {
-    //     const { name, email } = res.data.user
-    //     setFormData({ ...formData, name, email })
-    //   })
-    //   .catch(err => {
-    //     setTimeout(() => {
-    //       toast.error(`Error To Your Information ${err.response.statusText}`)
-    //     },1000)
-    //     if (err.response.status === 401) {
-    //       signout(() => {
-    //         history.push('/login')
-    //       })
-    //     }
-    //   })
+    }
   }
 
 
@@ -71,18 +59,19 @@ const Private = ({ history }) => {
     if(isPasswordChange) payload = {name: data.name, password: data.password}
     else payload = {name: data.name}
 
-    const token = getCookie('token')
+    const { token } = getLoginInfo()
 
-    axios
-    .put(`${process.env.REACT_APP_API_URL}/user/update`, payload, {
+    axios.put(`${process.env.REACT_APP_API_URL}/user/update`, payload, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
-    .then(res => {      
-      updateUser(res, () => {
-        toast.success('Profile Updated Successfully')
-      })
+    .then(res => {
+      console.log(res)
+      dispatch(updateUserData(res.data))
+      name = res.data.user.name
+      setIsNameChanged(false)
+      toast.success('Profile Updated Successfully')
     })
     .catch(err => {      
       toast.error(err.response.data.error)
@@ -93,10 +82,8 @@ const Private = ({ history }) => {
     setFormData({ ...formData, [text]: e.target.value })
   }
   
-
   return (
     <div className='bj-container'>
-      <ToastContainer />
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
         <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>
@@ -212,4 +199,4 @@ const Private = ({ history }) => {
   )
 }
 
-export default Private
+export default Profile

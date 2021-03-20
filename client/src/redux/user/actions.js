@@ -2,20 +2,59 @@ import axios from 'axios'
 import {
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
-  LOGOUT_SUCCESS
+  LOGOUT_SUCCESS,
+  GETDATA_SUCCESS,
+  SEND_ACTIVATION_EMAIL,
+  SEND_ACTIVATION_EMAIL_FAILURE,
+  ACTIVATION_USER,
+  ACTIVATION_USER_FAILURE
 } from './types'
 
-import { signout } from '../../helpers/auth'
+import { signout, getLoginInfo } from '../../helpers/auth'
 
-// export const registerUser = (dataToSubmit) => {
-//     const request = axios.post(`${process.env.REACT_APP_API_URL}/register`,dataToSubmit)
-//       .then(response => response.data)
-    
-//     return {
-//       type: REGISTER_USER,
-//       payload: request
-//     }
-// }
+
+export const registerUser = (dataToSubmit) => {
+  return (dispatch) => {
+    return new Promise ((resolve, reject) => {
+      axios.post(`${process.env.REACT_APP_API_URL}/register`,dataToSubmit)
+      .then(res => {
+        dispatch({
+          type: SEND_ACTIVATION_EMAIL
+        })
+        resolve(res.data.message)
+      })
+      .catch(error => {
+        dispatch({
+          type: SEND_ACTIVATION_EMAIL_FAILURE
+        })
+        reject(error.response.data.error)
+      })
+    })
+  }
+}
+
+export const activationUser = (dataToSubmit) => {
+  return (dispatch) => {
+    // console.log(dataToSubmit)
+    return new Promise((resolve, reject) => {
+      axios.post(`${process.env.REACT_APP_API_URL}/activation`,dataToSubmit)
+      .then( res => {
+        dispatch({
+          type: ACTIVATION_USER,
+          payload: res.data
+        })
+        resolve(res.data)
+      })
+      .catch(error => {
+        dispatch({
+          type: ACTIVATION_USER_FAILURE,
+          payload: error.response.data
+        })
+        reject(error.response.data.error)
+      })
+    })      
+  }
+}
 
 const logoutSuccess = () => {
   return {
@@ -30,10 +69,10 @@ const loginSuccess = (loginData) => {
   }
 }
 
-const loginFailure = (errorMessage) => {
+const loginFailure = (error) => {
   return {
     type: LOGIN_FAILURE,
-    payload: errorMessage
+    payload: error
   }
 }
 
@@ -56,25 +95,44 @@ export const loginUser = (dataToSubmit, endPoint) => {
 export const logoutUser = () => {
   return (dispatch) => {
     return new Promise((resolve) => {
-      signout()
-      dispatch(logoutSuccess())
-      resolve(true)
+      if (getLoginInfo()) {
+        signout()
+        dispatch(logoutSuccess())
+        resolve(true)
+      } 
     })
   }
 }
-export const getUser = () => {
 
-    // const request = axios.get(`${process.env.REACT_APP_API_URL}/user/${isAuth().id}`)
-    // .then(response => response.data)
-
-    // const user = isAuth()
-    // let payload
-    // if (!user) payload = ''
-    // return {
-    //   type: GET_USER,
-    //   payload: isAuth()
-    // }
+export const updateUserData = (userData) => {
+  return {
+    type: GETDATA_SUCCESS,
+    payload: userData
+  }
 }
 
+// export const getUser = ({id, token}) => { 
+//   return (dispatch) => {
+//     return new Promise((resolve, reject) => {
+
+//       axios.get(`${process.env.REACT_APP_API_URL}/user/${id}`, {
+//         headers: {
+//           Authorization: `Bearer ${token}`
+//         }
+//       })
+//       .then(res => {
+//         dispatch(updateUserData(res.data))
+//         resolve(res.data)
+//       })
+//       .catch(error => {
+//         if(error.response === undefined){
+//           console.log(error.config.url)
+//         } else {
+//           reject(error.response.data.error)
+//         }
+//       })
+//     })
+//   }  
+// }
 
 

@@ -1,44 +1,44 @@
 import React from 'react'
 import { useForm } from "react-hook-form"
+
 import authSvg from '../assests/auth.svg'
-import { ToastContainer, toast } from 'react-toastify'
-import { authenticate, isAuth } from '../helpers/auth'
-import { Link, Redirect } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { authenticate } from '../helpers/auth'
+import { Link } from 'react-router-dom'
 import { GoogleLogin } from 'react-google-login'
 import googleLogo from '../assests/google-icon.svg'
 import InputValidate from '../components/InputValidate'
-import { connect } from 'react-redux'
+
+import { useDispatch } from 'react-redux'
 import { loginUser } from '../redux'
 
-const Login = ({history, loginUser}) =>  {
+const Login = ({history}) =>  {
+  const dispatch = useDispatch()
+
   const { register, handleSubmit, errors } = useForm()
 
   const setAuth = (res) => {
     authenticate(res, () => {
-      setTimeout(() => {
-        toast.success(`Hey ${res.user.name}, Welcome back!`)
-      },1000)
-      isAuth() && isAuth().role === 'admin' ? history.push('/admin') : history.push('/private')
+      toast.success(`Hey ${res.user.name}, Welcome back!`)
+      res.isLogin && res.user.role === 'admin' ? history.push('/admin') : history.push('/')
     })
   }
 
   const onSubmit = (data) => {
     
-    loginUser(data, 'login')
+    dispatch(loginUser(data, 'login'))
     .then((res) => setAuth(res))
     .catch((error) => toast.error(error))    
   } 
 
   const responseGoogle = (response) => {
-    loginUser({idToken: response.tokenId}, 'googlelogin')
+    dispatch(loginUser({idToken: response.tokenId}, 'googlelogin'))
     .then((res) => setAuth(res))
     .catch((error) => toast.error(error))
   }
 
   return (
     <div className='bj-container'>
-      {isAuth() && <Redirect to='/' /> }
-      <ToastContainer />
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
         <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>
@@ -130,14 +130,14 @@ const Login = ({history, loginUser}) =>  {
   )
 }
 
-const mapStateToProps = ({user}) => {
-  return {
-    user
-  }
-}
+// const mapStateToProps = ({user}) => {
+//   return {
+//     user
+//   }
+// }
 
-const mapDispatchToProps = {  
-  loginUser  
-}
+// const mapDispatchToProps = {  
+//   loginUser  
+// }
 
-export default connect(mapStateToProps, mapDispatchToProps )(Login)
+export default Login

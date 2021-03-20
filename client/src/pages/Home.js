@@ -1,12 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { ToastContainer, toast } from 'react-toastify'
-import { connect } from 'react-redux'
+import { toast } from 'react-toastify'
+
+import { useDispatch } from 'react-redux'
 import { logoutUser } from '../redux'
 
-const Home = ({ history, logoutUser }) => {
-  const LogoutUser = () => {
-    logoutUser()
+const Home = ({ history }) => {
+  const dispatch = useDispatch()
+  const logout = () => {
+    dispatch(logoutUser())
     .then(() => {
       toast.success('Signed out Successfully');
       history.push('/')
@@ -15,7 +17,6 @@ const Home = ({ history, logoutUser }) => {
 
   return (    
     <div className='bj-container'>
-      <ToastContainer />
       <div className='lg:w-1/2 xl:w-8/12 p-6 sm:p-6'>
         <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-2xl font-extrabold  text-center '>
@@ -44,7 +45,7 @@ const Home = ({ history, logoutUser }) => {
                 <span className='ml-3'>Sign Up</span>
               </Link>
               <Link
-                to='/private'
+                to='/profile'
                 className='btn mt-5 bg-yellow-500 text-gray-100 hover:bg-yellow-700'
               >
                 <i className='fas fa-sign-in-alt  w-6  -ml-2' />
@@ -58,7 +59,7 @@ const Home = ({ history, logoutUser }) => {
                 <span className='ml-3'>Admin Dashbaord</span>
               </Link>
               <button
-                onClick={LogoutUser()}
+                onClick={logout}
                 className='btn mt-5 bg-pink-500 text-gray-100 hover:bg-pink-700'
               >
                 <i className='fas fa-sign-out-alt  w-6  -ml-2' />
@@ -72,14 +73,4 @@ const Home = ({ history, logoutUser }) => {
   )
 }
 
-const mapStateToProps = ({user}) => {
-  return {
-    user
-  }
-}
-
-const mapDispatchToProps = {  
-  logoutUser
-}
-
-export default connect( mapStateToProps, mapDispatchToProps )(Home)
+export default Home

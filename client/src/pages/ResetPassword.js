@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useForm } from "react-hook-form"
 import authSvg from '../assests/reset.svg'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import axios from 'axios'
-import { isAuth } from '../helpers/auth'
-import { Redirect } from 'react-router-dom'
 import InputValidate from '../components/InputValidate'
 
 const ResetPassword = ({match, history}) => {
@@ -19,10 +17,8 @@ const ResetPassword = ({match, history}) => {
       newPassword: data.password,
       resetPasswordToken: token
     })
-    .then(res => {      
-      setTimeout(() => {
-        toast.success(res.data.message)
-      },1000)
+    .then(res => {    
+      toast.success(res.data.message)
       history.push('/login')
     })
     .catch(err => {
@@ -41,8 +37,6 @@ const ResetPassword = ({match, history}) => {
 
   return (
     <div className='bj-container'>
-      {isAuth() && <Redirect to='/' />}
-      <ToastContainer />
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
         <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>

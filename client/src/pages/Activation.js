@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import authSvg from '../assests/welcome.svg'
-import { ToastContainer, toast } from 'react-toastify'
-import axios from 'axios'
+import { toast } from 'react-toastify'
 import jwt from 'jsonwebtoken'
-import { authenticate, isAuth } from '../helpers/auth'
-import { useHistory } from 'react-router-dom'
+import { authenticate } from '../helpers/auth'
+import { useDispatch } from 'react-redux'
+import { activationUser } from '../redux'
 
-function Activation({match}) {
+function Activation({match, history}) {
+  const dispatch = useDispatch()
+
   const [formData, setFormData] = useState({
     name: '',
     token: ''
   })
-
-  const history = useHistory()
 
   useEffect(() => {
     let token = match.params.token
@@ -22,32 +22,27 @@ function Activation({match}) {
       setFormData({ ...formData, name, token })
     }
      // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [match.params])
+  }, [])
 
   const { name, token } = formData
+
+  const setAuth = (res) => {
+    authenticate(res, () => {
+      toast.success(res.message)
+      res.isLogin && res.user.role === 'admin' ? history.push('/admin') : history.push('/')
+    })
+  }
 
   const handleSubmit = e => {
     e.preventDefault()
 
-    axios.post(`${process.env.REACT_APP_API_URL}/activation`, { token })
-      .then(res => {
-        authenticate(res, () => {
-          setTimeout(() => {
-            toast.success(res.data.message)
-          },1000)
-          isAuth() && isAuth().role === 'admin' ? history.push('/admin') : history.push('/private')            
-        })
-        // toast.success(res.data.message)
-      })
-      .catch(err => {        
-        console.log(err.response)
-        toast.error(err.response.data.error)
-      })
+    dispatch(activationUser({token}))
+    .then((res) => setAuth(res))
+    .catch((error) => toast.error(error))
   }
 
   return (
     <div className='bj-container'>
-      <ToastContainer />
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
         <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>

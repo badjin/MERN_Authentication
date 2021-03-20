@@ -1,7 +1,10 @@
 const User = require('../models/User')
 
-exports.readController = async (req, res) => {
+exports.readController = async (req, res, next) => {
   const userId = req.params.id
+  
+  if(!userId) return next(new ErrorResponse('No user found with this id.', 404))
+
   try {
     const user = await User.findById(userId)
     if(!user) {
@@ -22,7 +25,7 @@ exports.readController = async (req, res) => {
   }
 }
 
-exports.updateController = async (req, res) => {
+exports.updateController = async (req, res,next) => {
   const { id, name, password } = req.body
 
   try {

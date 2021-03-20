@@ -1,18 +1,18 @@
 import { Route, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-const PrivateRoute = ({ component: Component, condition, ...rest }) => {
+const GuestOnlyRoute = ({ component: Component, condition, ...rest }) => {
     const isLogin = useSelector(state => state.user.isLogin)
     return (
         <Route
             {...rest}
             render={props =>
-                (condition && isLogin) ? (
+                (!condition || !isLogin) ? (
                     <Component {...props} />
                 ) : (
                     <Redirect
                         to={{
-                            pathname: '/login',
+                            pathname: '/',
                             state: { from: props.location }
                         }}
                     />
@@ -22,4 +22,4 @@ const PrivateRoute = ({ component: Component, condition, ...rest }) => {
     )
 }
 
-export default PrivateRoute
+export default GuestOnlyRoute

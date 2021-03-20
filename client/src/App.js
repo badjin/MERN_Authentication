@@ -1,44 +1,84 @@
-import React, { Suspense } from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import React, { Suspense, useEffect, useState } from 'react'
+import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { ToastContainer, toast } from 'react-toastify'
+import axios from 'axios'
 
-import PrivateRoute from './Routes/PrivateRoute'
-import AdminRoute from './Routes/AdminRoute'
-import Register from './screens/Register'
-import Activation from './screens/Activation'
-import Login from './screens/Login'
-import Home from './screens/Home'
-import ForgotPassword from './screens/ForgotPassword'
-import ResetPassword from './screens/ResetPassword'
-import Private from './screens/Private'
-import Admin from './screens/Admin'
+import { updateUserData, logoutUser } from './redux'
+
+import PrivateRoute from './routes/PrivateRoute'
+import AdminRoute from './routes/AdminRoute'
+import GuestOnlyRoute from './routes/GuestOnlyRoute'
+
+import Register from './pages/Register'
+import Activation from './pages/Activation'
+import Login from './pages/Login'
+import Home from './pages/Home'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
+import Profile from './pages/Profile'
+import Admin from './pages/Admin'
+import About from './pages/About'
+import Contact from './pages/Contact'
+
 import NavBar from './components/Navbar'
-import About from './screens/About'
-import Contact from './screens/Contact'
 import Footer from './components/Footer'
-import { isAuth } from './helpers/auth'
+
+import { getLoginInfo } from './helpers/auth'
 
 
 const App = () => {
+  const dispatch = useDispatch()
+  const location = useLocation()
+  const [isAuth, setIsAuth] = useState('false')
+        
+  const checkTokenExpired = async () => {    
+    const loginInfo = getLoginInfo()
+    if(!loginInfo) return false 
 
-  const initializeUserInfo = () => {
-    if (!isAuth()) return
+    try {
+      //check if token has expired
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/user/${loginInfo.id}`, {
+        headers: {
+            Authorization: `Bearer ${loginInfo.token}`
+        }
+      })
+      if (res) {
+        dispatch(updateUserData(res.data))
+        return true
+      }
+      return false
+    } catch (error) {
+      dispatch(logoutUser())
+      .then(() => toast.error(error.response.data.error))
+      return false
+    }
   }
+
+  useEffect(() => {
+    checkTokenExpired().then((res) => setIsAuth(res))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location])
 
   return (
     <Suspense fallback={(<div>Loading...</div>)}>
       <NavBar />
       <div className='bj-content'>
+        <ToastContainer className='mt-11' />
         <Switch>
-          <Route exact path='/' render={props => <Home {...props} /> } />
-          <Route exact path='/register' render={props => <Register {...props} /> } />
-          <Route exact path='/login' render={props => <Login {...props} />} />
-          <Route exact path='/users/activate/:token' render={props => <Activation {...props} />} />
-          <Route exact path='/users/password/forget' render={props => <ForgotPassword {...props} />} />
-          <Route exact path='/users/password/reset/:token' render={props => <ResetPassword {...props} />} />
+          <GuestOnlyRoute condition={isAuth} exact path='/register' component={Register} />
+          <GuestOnlyRoute condition={isAuth} exact path='/login' component={Login} />
+          <GuestOnlyRoute condition={isAuth} exact path='/users/activate/:token' component={Activation} />
+          <GuestOnlyRoute condition={isAuth} exact path='/users/password/forget' component={ForgotPassword} />
+          <GuestOnlyRoute condition={isAuth} exact path='/users/password/reset/:token' component={ResetPassword} />
+          
+          <PrivateRoute condition={isAuth} exact path="/profile" component={Profile} />
+          <AdminRoute condition={isAuth} exact path="/admin" component={Admin} />
+
           <Route exact path='/about' render={props => <About {...props} />} />
           <Route exact path='/contact' render={props => <Contact {...props} />} />
-          <PrivateRoute exact path="/private" component={Private} />
-          <AdminRoute exact path="/admin" component={Admin} />
+          <Route exact path='/' render={props => <Home {...props} /> } />
+
           <Redirect to='/' />
         </Switch>
       </div>
@@ -47,4 +87,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default App

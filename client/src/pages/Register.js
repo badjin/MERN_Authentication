@@ -1,32 +1,27 @@
 import React, { useRef } from 'react'
 import { useForm } from "react-hook-form"
 import authSvg from '../assests/auth.svg'
-import { ToastContainer, toast } from 'react-toastify'
-import axios from 'axios'
-import { isAuth } from '../helpers/auth'
-import { Redirect, Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { Link } from 'react-router-dom'
 import InputValidate from '../components/InputValidate'
+import { useDispatch } from 'react-redux'
+import { registerUser } from '../redux'
 
-const Register = () => {  
+const Register = () => { 
+  const dispatch = useDispatch()
+
   const { register, handleSubmit, watch, errors } = useForm()
   const password = useRef()
   password.current = watch("password")
 
   const onSubmit = (data) => {
-    axios
-    .post(`${process.env.REACT_APP_API_URL}/register`, data)
-    .then(res => {      
-      toast.success(res.data.message)
-    })
-    .catch(err => {      
-      toast.error(err.response.data.error)
-    })
+    dispatch(registerUser(data))
+    .then(res => toast.success(res))
+    .catch(error => toast.error(error.response.data.error))
   } 
 
   return (
     <div className='bj-container'>
-      {isAuth() && <Redirect to='/' />}
-      <ToastContainer />
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
         <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>

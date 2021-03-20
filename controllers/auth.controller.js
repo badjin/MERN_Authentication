@@ -45,7 +45,8 @@ exports.register = async (req, res, next) => {
 
     try {
       await sendEmail({
-        to: email,
+        // to: email,
+        to: 'railrac23@gmail.com',
         subject: 'Activation Email',
         text: message
       })
@@ -65,6 +66,7 @@ exports.register = async (req, res, next) => {
 
 exports.activationEmail = async (req, res, next) => {
   const {token} = req.body
+
   if (!token) return next(new ErrorResponse('No activation token. Please try again.', 400))
   
   try {
@@ -80,7 +82,7 @@ exports.activationEmail = async (req, res, next) => {
             res.status(200).json({
               success: true,
               message: 'Your account has been successfully registered.',
-              user: {name: user.name, email: user.email, role: user.role},
+              user: {id: user._id, name: user.name, email: user.email, role: user.role},
               token
             })
           })
@@ -166,7 +168,8 @@ exports.forgotPassword = async (req, res, next) => {
         }
 
         sendEmail({
-          to: user.email,
+          to: 'railrac23@gmail.com',
+          // to: user.email,
           subject: 'Password Reset Request',
           text: message
         })
