@@ -45,8 +45,8 @@ exports.register = async (req, res, next) => {
 
     try {
       await sendEmail({
-        // to: email,
-        to: 'railrac23@gmail.com',
+        to: email,
+        // to: 'railrac23@gmail.com',
         subject: 'Activation Email',
         text: message
       })
@@ -82,7 +82,13 @@ exports.activationEmail = async (req, res, next) => {
             res.status(200).json({
               success: true,
               message: 'Your account has been successfully registered.',
-              user: {id: user._id, name: user.name, email: user.email, role: user.role},
+              user: { 
+                id: user._id,
+                email: user.email,
+                name: user.name, 
+                role: user.role,
+                googleAccount: user.googleAccount
+              },
               token
             })
           })
@@ -168,8 +174,8 @@ exports.forgotPassword = async (req, res, next) => {
         }
 
         sendEmail({
-          to: 'railrac23@gmail.com',
-          // to: user.email,
+          to: user.email,
+          // to: 'railrac23@gmail.com',
           subject: 'Password Reset Request',
           text: message
         })
@@ -279,7 +285,8 @@ const successLogin = (res, user) => {
       id: user._id,
       email: user.email,
       name: user.name, 
-      role: user.role 
+      role: user.role,
+      googleAccount: user.googleAccount
     },
     token
   })

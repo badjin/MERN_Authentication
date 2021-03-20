@@ -17,7 +17,8 @@ exports.readController = async (req, res, next) => {
               id: user._id,
               email: user.email,
               name: user.name, 
-              role: user.role 
+              role: user.role,
+              googleAccount: user.googleAccount
             }
     })
   } catch (error) {
@@ -40,7 +41,8 @@ exports.updateController = async (req, res,next) => {
               id: user._id,
               email: user.email,
               name: user.name, 
-              role: user.role 
+              role: user.role,
+              googleAccount: user.googleAccount
             }
     })
   } catch (error) {
