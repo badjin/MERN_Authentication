@@ -114,9 +114,28 @@ const Profile = ({ history }) => {
               />
               {errors.name && 
               <InputValidate filedName='name' type={errors.name.type} />}
-
-              <button
-                className='btn-shadow mt-5'
+              
+              {!user.userData.googleAccount && 
+                <button
+                  className={'btn-shadow mt-5'}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if(!isPasswordEnable) {
+                      setValue('password', undefined)
+                      setValue('ConfirmPpassword', undefined)
+                      clearErrors('password')
+                      clearErrors('ConfirmPpassword')
+                    }
+                    setIsPasswordEnable(!isPasswordEnable)
+                  }}
+                >
+                  <i className={`fas ${isPasswordEnable ? 'fa-unlock' : 'fa-lock'} fa 1x w-6  -ml-2`} />
+                  <span className='ml-3'>Password Change</span>
+                </button>
+              }
+              {/* <button
+                className={'btn-shadow mt-5'}
+                // disabled={user.userData.googleAccount}
                 onClick={(e) => {
                   e.preventDefault()
                   if(!isPasswordEnable) {
@@ -130,7 +149,8 @@ const Profile = ({ history }) => {
               >
                 <i className={`fas ${isPasswordEnable ? 'fa-unlock' : 'fa-lock'} fa 1x w-6  -ml-2`} />
                 <span className='ml-3'>Password Change</span>
-              </button>
+              </button> */}
+                        
 
               <input
                 name='password'
