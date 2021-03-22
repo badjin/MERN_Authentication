@@ -12,7 +12,7 @@ const {
   loginValidator,
   forgotPasswordValidator,
   resetPasswordValidator
-} = require('../utils/validationCheck')
+} = require('../middlewares/validationCheck')
 
 router.post('/register', registerValidator, register)
 

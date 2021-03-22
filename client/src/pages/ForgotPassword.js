@@ -1,6 +1,6 @@
 import React from 'react'
 import { useForm } from "react-hook-form"
-import authSvg from '../assests/forget.svg'
+import authSvg from '../assests/sergey-shmidt-koy6FlCCy5s-unsplash.jpg'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import InputValidate from '../components/InputValidate'
@@ -58,10 +58,15 @@ const ForgetPassword = () => {
         </div>
       </div>
       <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
-        <div
-          className='m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat'
+      <div
+          className='w-full bg-cover bg-center bg-no-repeat'
           style={{ backgroundImage: `url(${authSvg})` }}
-        ></div>
+        >
+          <div className="flex flex-col justify-end h-full absoluteinset-0 bg-gray-900 bg-opacity-30">            
+            <h1 className='p-12 text-xl text-gray-100 tracking-wide'>The elegant beauty of roses can be enjoyed just about anywhere with these miniature versions. Excellent for small garden spaces and grows happily in pots outdoors or in a sunny window. Blooms throughout the summer into autumn. The flowers can be cut just like larger roses to create quaint miniature flower arrangements.</h1>
+            
+          </div>
+        </div>        
       </div>
     </div>
   )

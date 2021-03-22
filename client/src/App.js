@@ -43,7 +43,7 @@ const App = () => {
             Authorization: `Bearer ${loginInfo.token}`
         }
       })
-      if (res) {
+      if (res) {        
         dispatch(updateUserData(res.data))
         return true
       }
@@ -58,7 +58,7 @@ const App = () => {
   useEffect(() => {
     checkTokenExpired().then((res) => setIsAuth(res))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
+  },[location])
 
   return (
     <Suspense fallback={(<div>Loading...</div>)}>

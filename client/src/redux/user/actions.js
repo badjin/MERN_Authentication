@@ -104,10 +104,10 @@ export const logoutUser = () => {
   }
 }
 
-export const updateUserData = (userData) => {
+export const updateUserData = (user) => {  
   return {
     type: GETDATA_SUCCESS,
-    payload: userData
+    payload: user
   }
 }
 

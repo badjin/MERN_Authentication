@@ -87,6 +87,7 @@ exports.activationEmail = async (req, res, next) => {
                 email: user.email,
                 name: user.name, 
                 role: user.role,
+                avatar: user.avatar,
                 googleAccount: user.googleAccount
               },
               token
@@ -286,6 +287,7 @@ const successLogin = (res, user) => {
       email: user.email,
       name: user.name, 
       role: user.role,
+      avatar: user.avatar,
       googleAccount: user.googleAccount
     },
     token

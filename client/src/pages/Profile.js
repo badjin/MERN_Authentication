@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useForm } from "react-hook-form"
 import { useSelector, useDispatch } from 'react-redux'
-import authSvg from '../assests/update.svg'
+import authSvg from '../assests/annie-spratt-pDGNBK9A0sk-unsplash.jpg'
 import { toast } from 'react-toastify'
 import axios from 'axios'
+
+// import defaultAvatar from `${process.env.REACT_APP_API_URL}/uploads/default.jpeg`
 
 import { getLoginInfo } from '../helpers/auth'
 import InputValidate from '../components/InputValidate'
@@ -19,6 +21,7 @@ const Profile = ({ history }) => {
     email: ''
   })
   const [isNameChanged, setIsNameChanged] = useState(false)
+  const [isAvatarChanged, setIsAvatarChanged] = useState(false)
   const [isPasswordEnable, setIsPasswordEnable] = useState(false)
   const [isPasswordChange, setIsPasswordChange] = useState(false)
 
@@ -27,10 +30,23 @@ const Profile = ({ history }) => {
   const password = useRef()
   password.current = watch("password")
 
+  const profile = useRef()
+  profile.current = watch("profileImage")
+
   useEffect(() => {    
     if(user.isLogin) setIsNameChanged(name !== user.userData.name)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name])
+
+  useEffect(() => {    
+    if(user.isLogin && profile.current){
+      if(profile.current.length){
+        setIsAvatarChanged(profile.current[0].name !== user.userData.avatar)
+      } else     
+        setIsAvatarChanged(false)
+    } 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile.current])
 
   useEffect(() => {    
     setIsPasswordChange(isPasswordEnable)
@@ -56,18 +72,36 @@ const Profile = ({ history }) => {
     clearErrors('ConfirmPpassword')
 
     let payload = {}
-    if(isPasswordChange) payload = {name: data.name, password: data.password}
-    else payload = {name: data.name}
+    if(!isPasswordChange){
+      payload = {
+        name: data.name, 
+        avatar: (data.profileImage.length ? data.profileImage[0].name : user.userData.avatar),
+        password: ''
+      }
+    }
+    else {
+      payload = {
+        name: data.name, 
+        avatar: (data.profileImage.length ? data.profileImage[0].name : user.userData.avatar),
+        password: data.password
+      } 
+    }
 
+    let sendData = new FormData()
+    sendData.append('id', user.userData.id)
+    sendData.append('name', payload.name)
+    sendData.append('avatar', payload.avatar)
+    sendData.append('password', payload.password)
+    sendData.append('profileImage', data.profileImage[0])
+    
     const { token } = getLoginInfo()
-
-    axios.put(`${process.env.REACT_APP_API_URL}/user/update`, payload, {
+    
+    axios.put(`${process.env.REACT_APP_API_URL}/user/update`, sendData, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
     .then(res => {
-      console.log(res)
       dispatch(updateUserData(res.data))
       name = res.data.user.name
       setIsNameChanged(false)
@@ -103,17 +137,25 @@ const Profile = ({ history }) => {
                 onChange={(e) => e.target.value}
                 value={email}
               />
-              <input
-                name='name'
-                className='input-field mt-5'
-                type='text'
-                placeholder='Name'
-                onChange={handleChange('name')}
-                value={name}
-                ref={register({ required: true, minLength: 3 })}
-              />
-              {errors.name && 
-              <InputValidate filedName='name' type={errors.name.type} />}
+              <div className="flex items-center justify-between mt-5">                
+                <label className="w-32 flex flex-col items-center rounded-lg tracking-wide  cursor-pointer has-tooltip">                  
+                  <img className=" w-12 h-12 rounded-full transform hover:scale-110" src={`${process.env.REACT_APP_API_URL}/uploads/${user.userData.avatar}`} alt="Profile"/>
+                  <span className="tooltip text-center  w-24 text-xs mt-14 bg-gray-600 text-gray-100 px-1 absolute rounded bg-opacity-50 ">Upload your profile image</span>
+                
+                  <input ref={register} type='file' name='profileImage' className="hidden" accept='image/*'/>
+                </label>
+                <input
+                  name='name'
+                  className='input-field ml-5'
+                  type='text'
+                  placeholder='Name'
+                  onChange={handleChange('name')}
+                  value={name}
+                  ref={register({ required: true, minLength: 3 })}
+                />
+                {errors.name && 
+                <InputValidate filedName='name' type={errors.name.type} />}
+              </div>
               
               {!user.userData.googleAccount && 
                 <button
@@ -133,24 +175,6 @@ const Profile = ({ history }) => {
                   <span className='ml-3'>Password Change</span>
                 </button>
               }
-              {/* <button
-                className={'btn-shadow mt-5'}
-                // disabled={user.userData.googleAccount}
-                onClick={(e) => {
-                  e.preventDefault()
-                  if(!isPasswordEnable) {
-                    setValue('password', undefined)
-                    setValue('ConfirmPpassword', undefined)
-                    clearErrors('password')
-                    clearErrors('ConfirmPpassword')
-                  }
-                  setIsPasswordEnable(!isPasswordEnable)
-                }}
-              >
-                <i className={`fas ${isPasswordEnable ? 'fa-unlock' : 'fa-lock'} fa 1x w-6  -ml-2`} />
-                <span className='ml-3'>Password Change</span>
-              </button> */}
-                        
 
               <input
                 name='password'
@@ -189,11 +213,11 @@ const Profile = ({ history }) => {
               <div className="flex justify-between space-x-2">
                 <button
                   type='submit'
-                  disabled={!isNameChanged && !isPasswordChange}
+                  disabled={!isNameChanged && !isAvatarChanged && !isPasswordChange}
                   className='btn btn-submit mt-5'
                 >
-                  <i className={`fas fa-user-plus fa 1x w-6 ${(!isNameChanged && !isPasswordChange) && 'text-gray-400'} -ml-2`} />
-                  <span className={`ml-3 ${(!isNameChanged && !isPasswordChange) && 'text-gray-400'}`}>Update</span>
+                  <i className={`fas fa-user-plus fa 1x w-6 ${(!isNameChanged && !isAvatarChanged && !isPasswordChange) && 'text-gray-400'} -ml-2`} />
+                  <span className={`ml-3 ${(!isNameChanged && !isAvatarChanged && !isPasswordChange) && 'text-gray-400'}`}>Update</span>
                 </button>
                 <button
                   className='btn btn-submit mt-5'
@@ -209,11 +233,16 @@ const Profile = ({ history }) => {
           </form>
         </div>
       </div>
-      <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
+      <div className='flex-1 bg-indigo-100 hidden lg:flex'>
         <div
-          className='m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat'
+          className='w-full bg-cover bg-center bg-no-repeat'
           style={{ backgroundImage: `url(${authSvg})` }}
-        ></div>
+        >
+          <div className="flex flex-col justify-end h-full absoluteinset-0 bg-gray-900 bg-opacity-30">            
+            <h1 className='p-12 text-xl text-gray-100 tracking-wide'>The elegant beauty of roses can be enjoyed just about anywhere with these miniature versions. Excellent for small garden spaces and grows happily in pots outdoors or in a sunny window. Blooms throughout the summer into autumn. The flowers can be cut just like larger roses to create quaint miniature flower arrangements.</h1>
+            
+          </div>
+        </div>        
       </div>
     </div>
   )

@@ -26,6 +26,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: 'subscriber'
   },
+  avatar: {
+    type: String,
+    default: 'default.png'
+  },
   resetPasswordToken: {
     type: String,
     default: ''
