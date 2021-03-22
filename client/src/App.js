@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 
-import { updateUserData, logoutUser } from './redux'
+import { updateUserData, logoutUser, setBgImages } from './redux'
 
 import PrivateRoute from './routes/PrivateRoute'
 import AdminRoute from './routes/AdminRoute'
@@ -31,7 +31,7 @@ const App = () => {
   const dispatch = useDispatch()
   const location = useLocation()
   const [isAuth, setIsAuth] = useState('false')
-        
+
   const checkTokenExpired = async () => {    
     const loginInfo = getLoginInfo()
     if(!loginInfo) return false 
@@ -53,7 +53,12 @@ const App = () => {
       .then(() => toast.error(error.response.data.error))
       return false
     }
-  }
+  }  
+
+  useEffect(() => {
+    dispatch(setBgImages())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     checkTokenExpired().then((res) => setIsAuth(res))

@@ -1,15 +1,13 @@
 import { Route, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { toast } from 'react-toastify'
 
 const PrivateRoute = ({ component: Component, condition, ...rest }) => {
-    const isLogin = useSelector(state => state.user.isLogin)
-    // if (!condition || !isLogin) toast.error("Please Sign In first.")
+    const user = useSelector(state => state.user)
     return (
         <Route
             {...rest}
             render={props =>
-                (condition && isLogin) ? (
+                (condition && user.isLogin) ? (
                     <Component {...props} />
                 ) : (
                     <Redirect

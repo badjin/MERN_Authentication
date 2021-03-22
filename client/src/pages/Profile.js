@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useForm } from "react-hook-form"
 import { useSelector, useDispatch } from 'react-redux'
-import authSvg from '../assests/annie-spratt-pDGNBK9A0sk-unsplash.jpg'
 import { toast } from 'react-toastify'
 import axios from 'axios'
-
-// import defaultAvatar from `${process.env.REACT_APP_API_URL}/uploads/default.jpeg`
 
 import { getLoginInfo } from '../helpers/auth'
 import InputValidate from '../components/InputValidate'
 import { updateUserData } from '../redux'
+
+import SidePanel from '../components/SidePanel'
 
 const Profile = ({ history }) => {
   const user = useSelector(state => state.user)
@@ -234,15 +233,7 @@ const Profile = ({ history }) => {
         </div>
       </div>
       <div className='flex-1 bg-indigo-100 hidden lg:flex'>
-        <div
-          className='w-full bg-cover bg-center bg-no-repeat'
-          style={{ backgroundImage: `url(${authSvg})` }}
-        >
-          <div className="flex flex-col justify-end h-full absoluteinset-0 bg-gray-900 bg-opacity-30">            
-            <h1 className='p-12 text-xl text-gray-100 tracking-wide'>The elegant beauty of roses can be enjoyed just about anywhere with these miniature versions. Excellent for small garden spaces and grows happily in pots outdoors or in a sunny window. Blooms throughout the summer into autumn. The flowers can be cut just like larger roses to create quaint miniature flower arrangements.</h1>
-            
-          </div>
-        </div>        
+        <SidePanel />        
       </div>
     </div>
   )

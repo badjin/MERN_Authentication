@@ -5,3 +5,7 @@ export {
   registerUser,
   activationUser
 } from './user/actions'
+
+export { 
+  setBgImages
+} from './bgImage/actions'

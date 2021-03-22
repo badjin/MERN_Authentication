@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import authSvg from '../assests/welcome.svg'
 import { toast } from 'react-toastify'
 import jwt from 'jsonwebtoken'
 import { authenticate } from '../helpers/auth'
 import { useDispatch } from 'react-redux'
 import { activationUser } from '../redux'
+
+import SidePanel from '../components/SidePanel'
 
 function Activation({match, history}) {
   const dispatch = useDispatch()
@@ -81,10 +82,7 @@ function Activation({match, history}) {
         </div>
       </div>
       <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
-        <div
-          className='m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat'
-          style={{ backgroundImage: `url(${authSvg})` }}
-        ></div>
+        <SidePanel /> 
       </div>
     </div>
   )

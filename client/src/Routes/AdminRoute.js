@@ -1,6 +1,5 @@
 import { Route, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { toast } from 'react-toastify'
 
 const AdminRoute = ({ component: Component, condition, ...rest }) => {
     const user = useSelector(state => state.user)

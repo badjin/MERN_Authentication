@@ -1,7 +1,6 @@
 import React from 'react'
 import { useForm } from "react-hook-form"
 
-import authSvg from '../assests/olia-gozha-9A_peGrSbZc-unsplash.jpg'
 import { toast } from 'react-toastify'
 import { authenticate } from '../helpers/auth'
 import { Link } from 'react-router-dom'
@@ -9,10 +8,12 @@ import { GoogleLogin } from 'react-google-login'
 import googleLogo from '../assests/google-icon.svg'
 import InputValidate from '../components/InputValidate'
 
+import SidePanel from '../components/SidePanel'
+
 import { useDispatch } from 'react-redux'
 import { loginUser } from '../redux'
 
-const Login = ({history}) =>  {
+const Login = ({ history }) =>  {
   const dispatch = useDispatch()
 
   const { register, handleSubmit, errors } = useForm()
@@ -121,15 +122,7 @@ const Login = ({history}) =>  {
         </div>
       </div>
       <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
-      <div
-          className='w-full bg-cover bg-center bg-no-repeat'
-          style={{ backgroundImage: `url(${authSvg})` }}
-        >
-          <div className="flex flex-col justify-end h-full absoluteinset-0 bg-gray-900 bg-opacity-30">            
-            <h1 className='p-12 text-xl text-gray-100 tracking-wide'>The elegant beauty of roses can be enjoyed just about anywhere with these miniature versions. Excellent for small garden spaces and grows happily in pots outdoors or in a sunny window. Blooms throughout the summer into autumn. The flowers can be cut just like larger roses to create quaint miniature flower arrangements.</h1>
-            
-          </div>
-        </div>        
+        <SidePanel /> 
       </div>
     </div>
   )
