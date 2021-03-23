@@ -2,16 +2,12 @@ import { Route, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 const AdminRoute = ({ component: Component, condition, ...rest }) => {
-    const user = useSelector(state => state.user)
-    // if (!condition || !user.isLogin){
-    //     toast.error("Please Sign In first.")
-    // } else if (user.userData.role !== 'admin'){
-    //     toast.error("You don't have administrator authentication.")
-    // }
+    const user = useSelector(state => state.user)    
+    
     return (
         <Route
             {...rest}
-            render={props =>
+            render={props => 
                 (condition && user.isLogin && user.userData.role === 'admin') ? (
                     <Component {...props} />
                 ) : (

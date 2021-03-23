@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 
 import { toast } from 'react-toastify'
 import { authenticate } from '../helpers/auth'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { GoogleLogin } from 'react-google-login'
 import googleLogo from '../assests/google-icon.svg'
 import InputValidate from '../components/InputValidate'
@@ -13,15 +13,16 @@ import SidePanel from '../components/SidePanel'
 import { useDispatch } from 'react-redux'
 import { loginUser } from '../redux'
 
-const Login = ({ history }) =>  {
+const Login = () =>  {
   const dispatch = useDispatch()
-
+  const history = useHistory()
   const { register, handleSubmit, errors } = useForm()
 
   const setAuth = (res) => {
     authenticate(res, () => {
       toast.success(`Hey ${res.user.name}, Welcome back!`)
-      res.isLogin && res.user.role === 'admin' ? history.push('/admin') : history.push('/')
+      if(res.success && res.user.role === 'admin') history.push('/admin')
+      else history.push('/')
     })
   }
 

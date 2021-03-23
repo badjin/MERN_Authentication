@@ -47,7 +47,7 @@ const Navbar = () => {
                 activeClassName="active-navbar"
               >
                 <img className="h-6 w-6 mr-1" src={logo} alt="FlowerLogo" />
-                <span className="font-bold">LilacTV</span>
+                <span className="font-bold">Lilac</span>
               </NavLink>
             </div>
 

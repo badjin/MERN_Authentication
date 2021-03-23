@@ -10,7 +10,7 @@ exports.requireSignin = async (req, res, next) => {
     // Bearer 43hrfoeih35kl4fds9t8532tlejlsr43r
     token = req.headers.authorization.split(' ')[1]
   }
-
+  
   if(!token){
     return next(new ErrorResponse('No authentication token, authorization denied.', 401))
   }
@@ -36,10 +36,10 @@ exports.requireSignin = async (req, res, next) => {
 
 exports.adminMiddleware = async (req, res, next) => {
   try {
-    console.log(req.user)
-    const user = await User.findOne({email: req.body.email})
+
+    const user = await User.findById(req.body.id)
     if(!user) {
-      return next(new ErrorResponse('No user found with this email.', 400))
+      return next(new ErrorResponse('No user found with this ID.', 400))
     }
 
     if (user.role !== 'admin') {

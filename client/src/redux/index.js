@@ -9,3 +9,9 @@ export {
 export { 
   setBgImages
 } from './bgImage/actions'
+
+export {
+  getUsers,
+  deleteUser,
+  clearUsersData
+} from './admin/actions'

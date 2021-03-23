@@ -41,7 +41,7 @@ export const removeLocalStorage = key => {
 };
 
 export const authenticate = (response, next) => {
-  console.log("AUTHENTICATE HELPER ON SIGNIN RESPONSE", response);
+  // console.log("AUTHENTICATE HELPER ON SIGNIN RESPONSE", response);
   setCookie("token", response.token);
   setLocalStorage('user', response.user.id);
   next();

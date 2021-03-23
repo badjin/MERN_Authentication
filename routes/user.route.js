@@ -1,35 +1,24 @@
 const router = require('express').Router()
 const { requireSignin, adminMiddleware, profileMiddleware } = require('../middlewares/auth')
 const uploadMulter = require('../middlewares/uploadImage')
-const { readController, updateController } = require('../controllers/user.controller')
+const { 
+  getUser, 
+  updateUser, 
+  getUsers, 
+  updateUsers,
+  deleteUser 
+} = require('../controllers/user.controller')
 
-// const {
-//   profileImageValidator
-// } = require('../middlewares/auth')
-
-router.get('/user/:id', requireSignin, readController)
+router.get('/user/:id', requireSignin, getUser)
 router.put('/user/update', 
   requireSignin, 
   uploadMulter, 
   profileMiddleware,
-  updateController
+  updateUser
 )
 
-router.put('/admin/update', 
-  requireSignin, 
-  adminMiddleware, 
-  uploadMulter, 
-  // profileMiddleware,
-  updateController
-)
-
-// router.put('/upload',uploadMulter, (req, res) => {
-//   // let name = req.body.name
-//   let image = req.file.path
-//   console.log(req.body, image)
-//   res.status(200).json({
-//     success: true
-//   })
-// })
+router.get('/admin/users', requireSignin, adminMiddleware, getUsers)
+router.put('/admin/update', requireSignin, adminMiddleware, updateUsers)
+router.post('/admin/delete', requireSignin, adminMiddleware, deleteUser)
 
 module.exports = router

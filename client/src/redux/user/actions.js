@@ -11,6 +11,7 @@ import {
 } from './types'
 
 import { signout, getLoginInfo } from '../../helpers/auth'
+import { clearUsersData } from '../admin/actions'
 
 
 export const registerUser = (dataToSubmit) => {
@@ -62,13 +63,6 @@ const logoutSuccess = () => {
   }
 }
 
-const loginSuccess = (loginData) => {
-  return {
-    type: LOGIN_SUCCESS,
-    payload: loginData
-  }
-}
-
 const loginFailure = (error) => {
   return {
     type: LOGIN_FAILURE,
@@ -81,7 +75,10 @@ export const loginUser = (dataToSubmit, endPoint) => {
       return new Promise((resolve, reject) => {
         axios.post(`${process.env.REACT_APP_API_URL}/${endPoint}`,dataToSubmit)
         .then( res => {
-          dispatch(loginSuccess(res.data))
+          dispatch({
+            type: LOGIN_SUCCESS,
+            payload: res.data
+          })
           resolve(res.data)
         })
         .catch(error => {
@@ -98,6 +95,7 @@ export const logoutUser = () => {
       if (getLoginInfo()) {
         signout()
         dispatch(logoutSuccess())
+        dispatch(clearUsersData())
         resolve(true)
       } 
     })

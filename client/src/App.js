@@ -43,7 +43,8 @@ const App = () => {
             Authorization: `Bearer ${loginInfo.token}`
         }
       })
-      if (res) {        
+      if (res) {
+        setIsAuth(true)   
         dispatch(updateUserData(res.data))
         return true
       }
@@ -61,7 +62,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    checkTokenExpired().then((res) => setIsAuth(res))
+    checkTokenExpired()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[location])
 
