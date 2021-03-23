@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { NavLink, Link, useHistory } from "react-router-dom"
-import logo from "../assests/flower.png"
+import logo from "../assests/logo.png"
 import { toast } from "react-toastify"
 import { useSelector, useDispatch } from 'react-redux'
 import { logoutUser } from '../redux'
