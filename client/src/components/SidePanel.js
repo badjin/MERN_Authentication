@@ -10,10 +10,10 @@ const SidePanel = () => {
   const [ backgroundImage, setBackgroundImage ] = useState(defaultImage)
 
   useEffect(() => {
-    if(!bgImages) {
+    if(!bgImages || bgImages.urls === 'undefined') {
       setBackgroundImage(defaultImage)
       return
-    }    
+    }
     setBackgroundImage(bgImages[Math.floor(Math.random() * 10)].urls.regular)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
