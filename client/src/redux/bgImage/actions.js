@@ -3,10 +3,10 @@ import {
   SET_BGIMAGES
 } from './types'
 
-export const setBgImages = () => {
+export const setBgImages = (theme) => {
   return (dispatch) => {
     return new Promise((resolve, reject) => {
-      axios.get(`https://api.unsplash.com/search/photos/?query=flowers&client_id=${process.env.REACT_APP_UNSPLASH_ACCESS}`)
+      axios.get(`https://api.unsplash.com/search/photos/?query=${theme}&client_id=${process.env.REACT_APP_UNSPLASH_ACCESS}`)
       .then( res => {
         dispatch({
           type: SET_BGIMAGES,

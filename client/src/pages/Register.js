@@ -18,7 +18,9 @@ const Register = () => {
   const onSubmit = (data) => {
     dispatch(registerUser(data))
     .then(res => toast.success(res))
-    .catch(error => toast.error(error.response.data.error))
+    .catch(error => {
+      toast.error(error)
+    })
   } 
 
   return (

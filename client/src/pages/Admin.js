@@ -4,9 +4,9 @@ import { toast } from 'react-toastify'
 import { getUsers, deleteUser } from '../redux'
 
 import { getLoginInfo } from '../helpers/auth'
-import Modal from '../components/Modal'
+import { DeleteModal } from '../components/Modal'
 
-const TableRow = ({ user, index, onClick }) => {
+const TableRow = ({ user, index, onEditBtnClick, onDeleteBtnClick }) => {
   return (
     <tr className={`border-b border-gray-200 hover:bg-gray-100 ${(index%2 && 'bg-gray-50')}`}>
       <td className="hidden lg:block py-3 md:px-6 px-3 text-left whitespace-nowrap">
@@ -31,23 +31,25 @@ const TableRow = ({ user, index, onClick }) => {
       </td>
       <td className="py-3 md:px-6 px-3 text-center">
         <div className="flex item-center justify-center">          
-          <div className="w-4 mr-2 transform hover:text-yellow-500 hover:scale-125 cursor-pointer">
+          <button className="w-4 mr-2 transform hover:text-yellow-500 hover:scale-125 cursor-pointer" onClick={() => { onEditBtnClick(index) }}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
-          </div>
-          <button className="w-4 mr-2 transform hover:text-red-500 hover:scale-125 cursor-pointer" onClick={() => { onClick(user) }}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
           </button>
+          {(user.role !== 'admin' && 
+            <button className="w-4 mr-2 transform hover:text-red-500 hover:scale-125 cursor-pointer" onClick={() => { onDeleteBtnClick(user) }}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          )}          
         </div>
       </td>
     </tr>
   )
 }
 
-const Admin = () => {
+const Admin = ({ history }) => {
   const users = useSelector(state => state.admin.users)
   const dispatch = useDispatch()
   const [usersData, setUsersData] = useState([]) 
@@ -72,6 +74,11 @@ const Admin = () => {
     })
     .catch(error => toast.error(error.response.data.error))
   }
+
+  const editSelectedUser = (index) => {
+    history.push(`/admin/users/${index}`)
+  }
+
   return (
     <div className='bj-container'>
       <div className="lg:w-full p-3 md:p-6">
@@ -90,15 +97,19 @@ const Admin = () => {
                 </thead>
                 <tbody className="text-gray-600 text-sm font-light">                  
                   { usersData.map((user, index) => {
-                    return <TableRow key={index} user={user} index={index} onClick={(user) => {
+                    return <TableRow key={index} user={user} index={index} onDeleteBtnClick={(user) => {
                       setSelectedUser(user)
                       setIsModal(true)
-                    }}/>
+                    }}
+                    onEditBtnClick={(index) => {
+                      editSelectedUser(index)
+                    }}
+                  />
                   })}                 
                 </tbody>
               </table>
               { isModal && 
-                <Modal title={`Delete user ${selectedUser.name}`}               
+                <DeleteModal title={selectedUser.name}               
                   confirmClick={() => {
                     deleteSelectedUser()
                     setIsModal(false)

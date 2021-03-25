@@ -6,7 +6,7 @@ const errorHandler = require('./middlewares/error')
 const cors = require('cors')
 
 // Connect DB
-connectDB()
+// connectDB()
 
 const app = express()
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Modal = ({ title, confirmClick, cancelClick }) => {
+export const DeleteModal = ({ title, confirmClick, cancelClick }) => {
   return (
     <div className="fixed z-10 inset-0 overflow-y-auto">
       <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -41,7 +41,9 @@ const Modal = ({ title, confirmClick, cancelClick }) => {
               </div>
               <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                 <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-                  {title}
+                  Delete &nbsp;&nbsp;
+                  <span className='text-indigo-700 font-bold'>{title}</span>
+                  's  &nbsp; account
                 </h3>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
@@ -66,4 +68,3 @@ const Modal = ({ title, confirmClick, cancelClick }) => {
   )
 }
 
-export default Modal

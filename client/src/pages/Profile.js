@@ -52,17 +52,12 @@ const Profile = ({ history }) => {
   }, [isPasswordEnable])
 
   useEffect(() => {
-    loadProfile()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const loadProfile = () => {
     if(user.isLogin){
       const { name, email } = user.userData
       setFormData({ ...formData, name, email })
     }
-  }
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const onSubmit = (data) => {
     setValue('password', undefined)

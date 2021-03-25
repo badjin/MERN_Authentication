@@ -20,6 +20,7 @@ import Profile from './pages/Profile'
 import Admin from './pages/Admin'
 import About from './pages/About'
 import Contact from './pages/Contact'
+import EditUserInfo from './pages/EditUserInfo'
 
 import NavBar from './components/Navbar'
 import Footer from './components/Footer'
@@ -57,7 +58,7 @@ const App = () => {
   }  
 
   useEffect(() => {
-    dispatch(setBgImages())
+    dispatch(setBgImages('flowers'))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -80,6 +81,7 @@ const App = () => {
           
           <PrivateRoute condition={isAuth} exact path="/profile" component={Profile} />
           <AdminRoute condition={isAuth} exact path="/admin" component={Admin} />
+          <AdminRoute condition={isAuth} exact path="/admin/users/:id" component={EditUserInfo} />
 
           <Route exact path='/about' render={props => <About {...props} />} />
           <Route exact path='/contact' render={props => <Contact {...props} />} />

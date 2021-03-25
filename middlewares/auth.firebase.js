@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken')
-const User = require('../models/User')
-const ErrorResponse = require('../utils/errorResponse')
 const fs = require('fs')
+
+const ErrorResponse = require('../utils/errorResponse')
+const { findById } = require('../models/UserFirebase')
+
 
 exports.requireSignin = async (req, res, next) => {
   let token
@@ -10,23 +12,22 @@ exports.requireSignin = async (req, res, next) => {
     // Bearer 43hrfoeih35kl4fds9t8532tlejlsr43r
     token = req.headers.authorization.split(' ')[1]
   }
-  
+
   if(!token){
     return next(new ErrorResponse('No authentication token, authorization denied.', 401))
   }
 
   try {
-    const verified = jwt.verify(token, process.env.AUTH_SECRET)    
+    const verified = jwt.verify(token, process.env.AUTH_SECRET)
     if (!verified) {
       return next(new ErrorResponse('Token verification failed, authorization denied.', 401))
     }
     
-    const user = await User.findById(verified.id)
-    if(!user) {
-      return next(new ErrorResponse('No user found with this id.', 404))
-    }
+    const user = await findById(verified.id)
+    if(!user) next(new ErrorResponse('No user found with this ID.', 404))
 
-    req.body.id = user._id
+    // req.body.id = user.id
+        
     next()
 
   } catch (error) {
@@ -41,26 +42,24 @@ exports.adminMiddleware = async (req, res, next) => {
     // Bearer 43hrfoeih35kl4fds9t8532tlejlsr43r
     token = req.headers.authorization.split(' ')[1]
   }
-  
+
   if(!token){
     return next(new ErrorResponse('No authentication token, authorization denied.', 401))
   }
 
   try {
-    const verified = jwt.verify(token, process.env.AUTH_SECRET)    
+    const verified = jwt.verify(token, process.env.AUTH_SECRET)
     if (!verified) {
       return next(new ErrorResponse('Token verification failed, authorization denied.', 401))
     }
     
-    const user = await User.findById(verified.id)
-    if(!user) {
-      return next(new ErrorResponse('No user found with this id.', 404))
-    }
+    const user = await findById(verified.id)
+    if(!user) next(new ErrorResponse('No user found with this ID.', 404))
 
     if (user.role !== 'admin') {
       return next(new ErrorResponse('Admin resource. Access denied.', 401))      
     }
-    req.profile = user
+        
     next()
 
   } catch (error) {

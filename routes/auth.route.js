@@ -6,7 +6,8 @@ const {
   resetPassword,
   activationEmail,
   googleLogin
-} = require('../controllers/auth.controller')
+} = require('../controllers/auth.firebase')
+// } = require('../controllers/auth.controller')
 const {
   registerValidator,
   loginValidator,
