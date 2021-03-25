@@ -14,7 +14,7 @@ node_modules/
 
 # misc
 config.env
-serviceAccount.json
+firebaseConfig.json
 .DS_Store
 .env.local
 .env.development.local
