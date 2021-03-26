@@ -1,17 +1,15 @@
 import React from 'react'
 import { useForm } from "react-hook-form"
-
 import { toast } from 'react-toastify'
-import { authenticate } from '../helpers/auth'
+import { useDispatch } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
 import { GoogleLogin } from 'react-google-login'
-import googleLogo from '../assests/google-icon.svg'
-import InputValidate from '../components/InputValidate'
 
-import SidePanel from '../components/SidePanel'
-
-import { useDispatch } from 'react-redux'
-import { loginUser } from '../redux'
+import { authenticate } from '../../helpers/auth'
+import googleLogo from '../../assests/google-icon.svg'
+import InputValidate from '../../components/InputValidate'
+import SidePanel from '../../components/SidePanel'
+import { loginUser } from '../../redux'
 
 const Login = () =>  {
   const dispatch = useDispatch()

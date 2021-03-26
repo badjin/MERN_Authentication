@@ -2,9 +2,9 @@ import React from 'react'
 import { useForm } from "react-hook-form"
 import { toast } from 'react-toastify'
 import axios from 'axios'
-import InputValidate from '../components/InputValidate'
+import InputValidate from '../../components/InputValidate'
 
-import SidePanel from '../components/SidePanel'
+import SidePanel from '../../components/SidePanel'
 
 const ForgetPassword = () => {
   const { register, handleSubmit, errors } = useForm()

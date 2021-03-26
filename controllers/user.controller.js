@@ -37,11 +37,13 @@ exports.updateUser = async (req, res,next) => {
     if(avatar) {
       // Before updating, delete old profile image
       // Users have only one image for profile
-      fs.unlink(`./uploads/${user.avatar}`, (error) => {
-        if(error) console.log(error)
-      })
+      if(user.avatar !== 'default.png'){
+        fs.unlink(`./uploads/${user.avatar}`, (error) => {
+          if(error) console.log(error)
+        })
+      }
       user.avatar = avatar
-    } else user.avatar = 'default.png'
+    } 
 
     password && (user.password = password)
 
@@ -88,6 +90,12 @@ exports.deleteUser = async (req, res, next) => {
       return next(new ErrorResponse('Failed to delete the user.', 404))
     }
 
+    if(req.body.avatar != 'default.png') {
+      fs.unlink(`./uploads/${req.body.avatar}`, (error) => {
+        if(error) console.log(error)
+      })
+    }
+
     const users = await User.find()
     if(!users) {
       return next(new ErrorResponse('No user found in Database', 404))
@@ -103,5 +111,37 @@ exports.deleteUser = async (req, res, next) => {
 }
 
 exports.updateUsers = async (req, res, next) => {
+  const { id, name, avatar, role } = req.body
+  
+  try {
+    const user = await findById(id)
+    user.name = name
+    if(avatar) {
+      // Before updating, delete old profile image
+      // Users have only one image for profile
+      if(user.avatar !== 'default.png'){
+        fs.unlink(`./uploads/${user.avatar}`, (error) => {
+          if(error) console.log(error)
+        })
+      }
+      user.avatar = avatar
+    } 
 
+    user.role = role
+
+    await user.save()
+
+    const users = await User.find()
+    if(!users) {
+      return next(new ErrorResponse('No user found in Database', 404))
+    }
+
+    res.status(200).json({
+      success: true,
+      users
+    })
+    
+  } catch (error) {
+    next(error)
+  }
 }

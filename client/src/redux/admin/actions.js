@@ -54,6 +54,31 @@ export const deleteUser = (user, token) => {
   }
 }
 
+export const updateUser = (user, token) => {
+  return (dispatch) => {
+    return new Promise((resolve, reject) => {
+      axios.put(`${process.env.REACT_APP_API_URL}/admin/update/`, user, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+      })
+      .then( res => {
+        dispatch({
+          type: GETUSERS_SUCCESS,
+          payload: res.data.users
+        })
+        resolve(true)
+      })
+      .catch(error => {
+        dispatch({
+          type: GETUSERS_FAILURE
+        })
+        reject(error)
+      })
+    })      
+  }
+}
+
 
 export const clearUsersData = () => {
   return {

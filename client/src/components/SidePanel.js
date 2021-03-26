@@ -22,7 +22,7 @@ const SidePanel = () => {
 
     let tempImage = ''
     while(true){
-      tempImage = bgImages[Math.floor(Math.random() * 10)].urls.regular
+      tempImage = bgImages[Math.floor(Math.random() * 20)].urls.regular
       if(backgroundImage !== tempImage) break
     }
     setBackgroundImage(tempImage)

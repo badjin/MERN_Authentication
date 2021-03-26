@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify'
 import jwt from 'jsonwebtoken'
-import { authenticate } from '../helpers/auth'
+import { authenticate } from '../../helpers/auth'
 import { useDispatch } from 'react-redux'
-import { activationUser } from '../redux'
+import { activationUser } from '../../redux'
 
-import SidePanel from '../components/SidePanel'
+import SidePanel from '../../components/SidePanel'
 
 function Activation({match, history}) {
   const dispatch = useDispatch()

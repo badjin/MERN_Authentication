@@ -1,7 +1,8 @@
 export { 
   loginUser, 
   logoutUser,
-  updateUserData,
+  updateLoginUser,
+  updateProfile,
   registerUser,
   activationUser
 } from './user/actions'
@@ -13,5 +14,6 @@ export {
 export {
   getUsers,
   deleteUser,
+  updateUser,
   clearUsersData
 } from './admin/actions'

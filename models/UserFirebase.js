@@ -1,4 +1,6 @@
 const { db } = require('../config/dbFirebase')
+const dummyUsers = require('../models/MOCK_DATA.json')
+const { getHashedPassword } = require('../utils')
 
 const getUser = (userSnapShot) => {
   return {
@@ -33,6 +35,18 @@ const saveUserWithoutId = (user) => {
     role: user.role,
     resetPasswordToken: user.resetPasswordToken,
     googleAccount: user.googleAccount
+  }
+}
+
+const dummyUser = (user) => {
+  return {
+    name: user.name,
+    email: user.email,
+    password: user.password,
+    avatar: 'default.png',
+    role: 'customer',
+    resetPasswordToken: '',
+    googleAccount: false
   }
 }
 
@@ -75,7 +89,7 @@ exports.findById = async (id) => {
   }  
 }
 
-exports.deleteUser = async (id) => {
+exports.deleteUserFromDB = async (id) => {
   try {
     await db.collection('users').doc(id).delete()
     return true
@@ -106,4 +120,12 @@ exports.save = async (user) => {
 exports.update = async (user) => {
   const saveUser = saveUserWithoutId(user)
   await db.collection('users').doc(user.id).set(saveUser)
+}
+
+exports.addDummyUsers = async () => {
+  dummyUsers.map(async (user) => {
+    user.password = await getHashedPassword('12345678')    
+    const addUser = dummyUser(user)
+    await db.collection('users').doc().set(addUser)
+  })
 }

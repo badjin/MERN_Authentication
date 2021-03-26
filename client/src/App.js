@@ -4,23 +4,26 @@ import { useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 
-import { updateUserData, logoutUser, setBgImages } from './redux'
+import { updateLoginUser, logoutUser, setBgImages } from './redux'
 
 import PrivateRoute from './routes/PrivateRoute'
 import AdminRoute from './routes/AdminRoute'
 import GuestOnlyRoute from './routes/GuestOnlyRoute'
 
-import Register from './pages/Register'
-import Activation from './pages/Activation'
-import Login from './pages/Login'
+import Register from './pages/auth/Register'
+import Activation from './pages/auth/Activation'
+import Login from './pages/auth/Login'
+import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword from './pages/auth/ResetPassword'
+
+import Admin from './pages/admin/UserList'
+import EditUserInfo from './pages/admin/EditUserInfo'
+
+import Profile from './pages/user/Profile'
+
 import Home from './pages/Home'
-import ForgotPassword from './pages/ForgotPassword'
-import ResetPassword from './pages/ResetPassword'
-import Profile from './pages/Profile'
-import Admin from './pages/Admin'
 import About from './pages/About'
 import Contact from './pages/Contact'
-import EditUserInfo from './pages/EditUserInfo'
 
 import NavBar from './components/Navbar'
 import Footer from './components/Footer'
@@ -46,7 +49,7 @@ const App = () => {
       })
       if (res) {
         setIsAuth(true)   
-        dispatch(updateUserData(res.data))
+        dispatch(updateLoginUser(res.data))
         return true
       }
       return false
@@ -58,7 +61,7 @@ const App = () => {
   }  
 
   useEffect(() => {
-    dispatch(setBgImages('flowers'))
+    dispatch(setBgImages('board game'))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

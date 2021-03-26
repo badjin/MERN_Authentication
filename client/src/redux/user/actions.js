@@ -102,13 +102,34 @@ export const logoutUser = () => {
   }
 }
 
-export const updateUserData = (user) => {  
+export const updateLoginUser = (user) => {  
   return {
     type: GETDATA_SUCCESS,
     payload: user
   }
 }
 
+export const updateProfile = (user, token) => {
+  return (dispatch) => {
+    return new Promise((resolve, reject) => {
+      axios.put(`${process.env.REACT_APP_API_URL}/user/update/`, user, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+      })
+      .then( res => {
+        dispatch({
+          type: GETDATA_SUCCESS,
+          payload: res.data
+        })
+        resolve(true)
+      })
+      .catch(error => {        
+        reject(error)
+      })
+    })      
+  }
+}
 // export const getUser = ({id, token}) => { 
 //   return (dispatch) => {
 //     return new Promise((resolve, reject) => {

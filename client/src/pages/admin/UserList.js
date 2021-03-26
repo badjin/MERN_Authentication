@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
-import { getUsers, deleteUser } from '../redux'
 
-import { getLoginInfo } from '../helpers/auth'
-import { DeleteModal } from '../components/Modal'
+import { getUsers, deleteUser } from '../../redux'
+import { getLoginInfo } from '../../helpers/auth'
+import { DeleteModal } from '../../components/Modal'
 
 const TableRow = ({ user, index, onEditBtnClick, onDeleteBtnClick }) => {
+  const role = {
+    'admin': 'bg-yellow-600',
+    'staff': 'bg-green-600',
+    'customer': 'bg-purple-600'
+  }
   return (
     <tr className={`border-b border-gray-200 hover:bg-gray-100 ${(index%2 && 'bg-gray-50')}`}>
       <td className="hidden lg:block py-3 md:px-6 px-3 text-left whitespace-nowrap">
@@ -27,7 +32,7 @@ const TableRow = ({ user, index, onEditBtnClick, onDeleteBtnClick }) => {
           <span className="">{user.email}</span>
       </td>
       <td className="py-3 md:px-6 text-center">
-        <span className={`text-gray-100 ${user.role === 'admin' ? 'bg-yellow-600' : 'bg-purple-600'} py-1 px-3 rounded-full text-xs`}>{user.role}</span>
+        <span className={`text-gray-100 ${ role[user.role]} py-1 px-3 uppercase rounded-full text-xs`}>{user.role}</span>
       </td>
       <td className="py-3 md:px-6 px-3 text-center">
         <div className="flex item-center justify-center">          
@@ -56,16 +61,15 @@ const Admin = ({ history }) => {
   const [isModal, setIsModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState('')
 
+  // Loading all user's info
   useEffect(() => {
-    if(!users || !users.length){
-      dispatch(getUsers(getLoginInfo().token))
-      .then(res => {
-        setUsersData(res)
-      })
-      .catch(error => toast.error(error.response.data.error))
-    } else setUsersData(users)
+    dispatch(getUsers(getLoginInfo().token))
+    .then(res => {
+      setUsersData(res)
+    })
+    .catch(error => toast.error(error.response.data.error))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [users])
 
   const deleteSelectedUser = () => {    
     dispatch(deleteUser(selectedUser, getLoginInfo().token))

@@ -1,6 +1,7 @@
 const fs = require('fs')
-const { findAll, findById, update, deleteUser } = require('../models/UserFirebase')
+const { findAll, findById, update, deleteUserFromDB, addDummyUsers } = require('../models/UserFirebase')
 const { getHashedPassword } = require('../utils')
+
 
 exports.getUser = async (req, res, next) => {
   const userId = req.params.id  
@@ -31,19 +32,21 @@ exports.getUser = async (req, res, next) => {
 }
 
 exports.updateUser = async (req, res,next) => {
-  const { id, name, password, avatar } = req.body
+  let { id, name, password, avatar } = req.body
   
   try {
     const user = await findById(id)
     user.name = name
-    if(avatar && avatar != 'default.png') {
+    if(avatar) {
       // Before updating, delete old profile image
       // Users have only one image for profile
-      fs.unlink(`./uploads/${user.avatar}`, (error) => {
-        if(error) console.log(error)
-      })
+      if(user.avatar !== 'default.png'){
+        fs.unlink(`./uploads/${user.avatar}`, (error) => {
+          if(error) console.log(error)
+        })
+      }
       user.avatar = avatar
-    } else user.avatar = 'default.png'
+    }
 
     if(password) {
       password = await getHashedPassword(password)
@@ -87,10 +90,17 @@ exports.getUsers = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
 
-  try {    
-    const user = await deleteUser(req.body.id)
+  try {
+    // await addDummyUsers()
+    const user = await deleteUserFromDB(req.body.id)
     if(!user) {
       return next(new ErrorResponse('Failed to delete the user.', 404))
+    }
+
+    if(req.body.avatar != 'default.png') {
+      fs.unlink(`./uploads/${req.body.avatar}`, (error) => {
+        if(error) console.log(error)
+      })
     }
 
     const users = await findAll()
@@ -108,5 +118,38 @@ exports.deleteUser = async (req, res, next) => {
 }
 
 exports.updateUsers = async (req, res, next) => {
+  const { id, name, avatar, role } = req.body
+  
+  try {
+    const user = await findById(id)
+    user.name = name
+    if(avatar) {
+      // Before updating, delete old profile image
+      // Users have only one image for profile
+      if(user.avatar !== 'default.png'){
+        fs.unlink(`./uploads/${user.avatar}`, (error) => {
+          if(error) console.log(error)
+        })
+      }
+      user.avatar = avatar
+    } 
 
+    user.role = role
+
+    await update(user)
+
+    const users = await findAll()
+    if(!users) {
+      return next(new ErrorResponse('No user found in Database', 404))
+    }
+
+    res.status(200).json({
+      success: true,
+      users
+    })
+    
+  } catch (error) {
+    next(error)
+  }
 }
+

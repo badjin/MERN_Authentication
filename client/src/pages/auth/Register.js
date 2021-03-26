@@ -2,11 +2,11 @@ import React, { useRef } from 'react'
 import { useForm } from "react-hook-form"
 import { toast } from 'react-toastify'
 import { Link } from 'react-router-dom'
-import InputValidate from '../components/InputValidate'
 import { useDispatch } from 'react-redux'
-import { registerUser } from '../redux'
 
-import SidePanel from '../components/SidePanel'
+import { registerUser } from '../../redux'
+import InputValidate from '../../components/InputValidate'
+import SidePanel from '../../components/SidePanel'
 
 const Register = () => { 
   const dispatch = useDispatch()

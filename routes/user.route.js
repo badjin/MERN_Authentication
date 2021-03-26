@@ -20,7 +20,12 @@ router.put('/user/update',
 )
 
 router.get('/admin/users', adminMiddleware, getUsers)
-router.put('/admin/update', adminMiddleware, updateUsers)
+router.put('/admin/update', 
+  adminMiddleware,
+  uploadMulter, 
+  profileMiddleware,
+  updateUsers
+)
 router.post('/admin/delete', adminMiddleware, deleteUser)
 
 module.exports = router

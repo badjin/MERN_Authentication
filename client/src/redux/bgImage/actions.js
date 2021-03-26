@@ -6,7 +6,7 @@ import {
 export const setBgImages = (theme) => {
   return (dispatch) => {
     return new Promise((resolve, reject) => {
-      axios.get(`https://api.unsplash.com/search/photos/?query=${theme}&client_id=${process.env.REACT_APP_UNSPLASH_ACCESS}`)
+      axios.get(`https://api.unsplash.com/search/photos/?query=${theme}&per_page=20&client_id=${process.env.REACT_APP_UNSPLASH_ACCESS}`)
       .then( res => {
         dispatch({
           type: SET_BGIMAGES,

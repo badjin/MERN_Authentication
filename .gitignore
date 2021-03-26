@@ -24,3 +24,6 @@ firebaseConfig.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+#user's profile images
+/uploads/profiles/lilac-*
