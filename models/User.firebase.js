@@ -1,5 +1,5 @@
 const { db } = require('../config/dbFirebase')
-const dummyUsers = require('../models/MOCK_DATA.json')
+const dummyUsers = require('./MOCK_DATA.json')
 const { getHashedPassword } = require('../utils')
 
 const getUser = (userSnapShot) => {
@@ -39,7 +39,7 @@ const dummyUser = (user) => {
   }
 }
 
-exports.findByEmail = async (email) => {
+const findByEmail = async (email) => {
   const usersRef = db.collection('users')
 
   const snapshot = await usersRef.where('email', '==', email).get()
@@ -52,7 +52,8 @@ exports.findByEmail = async (email) => {
   return user
 }
 
-exports.findOne = async (key, value) => {
+const findByField = async (key, value) => {
+  
   const usersRef = db.collection('users')
 
   const snapshot = await usersRef.where(key, '==', value).get()
@@ -65,7 +66,7 @@ exports.findOne = async (key, value) => {
   return user
 }
 
-exports.findById = async (id) => {
+const findById = async (id) => {
   const usersRef = db.collection('users')
 
   try {
@@ -78,7 +79,7 @@ exports.findById = async (id) => {
   }  
 }
 
-exports.deleteUserFromDB = async (id) => {
+const deleteUserFromDB = async (id) => {
   try {
     await db.collection('users').doc(id).delete()
     return true
@@ -87,20 +88,80 @@ exports.deleteUserFromDB = async (id) => {
   }
 }
 
-exports.save = async (user) => {
+const createCustom = async (user) => {
   const saveUser = saveUserWithoutId(user)
   await db.collection('users').doc().set(saveUser)
 }
 
-exports.update = async (user) => {
+const updateCustom = async (user) => {
   const saveUser = saveUserWithoutId(user)
-  await db.collection('users').doc(user.id).set(saveUser)
+  try {
+    
+    await db.collection('users').doc(user.id).set(saveUser)
+  } catch (error) {
+    console.log(error)
+  }
+  // return saveUser
 }
 
-exports.addDummyUsers = async () => {
+const addDummyUsers = async () => {
   dummyUsers.map(async (user) => {
     user.password = await getHashedPassword('12345678')    
     const addUser = dummyUser(user)
     await db.collection('users').doc().set(addUser)
   })
+}
+
+const getUserWithoutPassword = (userSnapShot) => {
+  return {
+    id: userSnapShot.id,
+    name: userSnapShot.data().name,
+    email: userSnapShot.data().email,
+    role: userSnapShot.data().role,
+    avatar: userSnapShot.data().avatar,
+    googleAccount: userSnapShot.data().googleAccount
+  }
+}
+
+const sendUsers = async (req, res, next) => {
+  const usersRef = db.collection('users').orderBy('role')
+
+  try {
+    const page = parseInt(req.query.page || '0')
+    const perPage = parseInt(process.env.PER_PAGE)
+
+    const usersSnapshot = await usersRef.limit(perPage).offset(page*perPage).get()
+    if (usersSnapshot.empty) next(new ErrorResponse('No users found in Database', 404))
+
+    const users = []
+    await usersSnapshot.forEach(doc => {
+      const user = getUserWithoutPassword(doc)
+      users.push(user)
+    })
+
+    const total = (await usersRef.get()).size
+
+    if(!users) {
+      return next(new ErrorResponse('No users found in Database', 404))
+    }
+
+    res.status(200).json({
+      success: true,
+      users,
+      totalPages: Math.ceil(total / perPage)
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports = { 
+  findById, 
+  findByEmail,
+  findByField,
+  createCustom, 
+  updateCustom, 
+  addDummyUsers,
+  sendUsers,
+  deleteUserFromDB 
 }

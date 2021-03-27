@@ -4,10 +4,10 @@ import {
   GETUSERS_FAILURE
 } from './types'
 
-export const getUsers = (token) => {
+export const getUsers = (page, token) => {
   return (dispatch) => {
     return new Promise((resolve, reject) => {
-      axios.get(`${process.env.REACT_APP_API_URL}/admin/users/`, {
+      axios.get(`${process.env.REACT_APP_API_URL}/admin/users?page=${page}`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -15,9 +15,9 @@ export const getUsers = (token) => {
       .then( res => {
         dispatch({
           type: GETUSERS_SUCCESS,
-          payload: res.data.users
+          payload: res.data
         })
-        resolve(res.data.users)
+        resolve(res.data)
       })
       .catch(error => {
         dispatch({
@@ -40,9 +40,9 @@ export const deleteUser = (user, token) => {
       .then( res => {
         dispatch({
           type: GETUSERS_SUCCESS,
-          payload: res.data.users
+          payload: res.data
         })
-        resolve(res.data.users)
+        resolve(res.data)
       })
       .catch(error => {
         dispatch({
@@ -65,7 +65,7 @@ export const updateUser = (user, token) => {
       .then( res => {
         dispatch({
           type: GETUSERS_SUCCESS,
-          payload: res.data.users
+          payload: res.data
         })
         resolve(true)
       })

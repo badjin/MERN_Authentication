@@ -77,7 +77,7 @@ const Navbar = () => {
             ? (
               <>
                 <div className='flex items-center mr-1 cursor-pointer'>
-                  <img className="w-8 h-8 rounded-full" src={`${process.env.REACT_APP_API_URL}/uploads/${user.userData.avatar}`} alt="Profile"/>
+                  <img className="w-8 h-8 rounded-full" src={`${process.env.REACT_APP_PROFILE_URL}/${user.userData.avatar}`} alt="Profile"/>
                   <Link
                     to='/profile'
                     className="ml-2 px-3 py-2 text-purple-500 text-sm hover:text-white hover:bg-purple-500 rounded-full transition ease-out duration-500"
@@ -157,7 +157,7 @@ const Navbar = () => {
             ? (
               <>
                 <div className='flex items-center mr-1'>
-                <img className="w-8 h-8 rounded-full" src={`${process.env.REACT_APP_API_URL}/uploads/${user.userData.avatar}`} alt="Profile"/>
+                <img className="w-8 h-8 rounded-full" src={`${process.env.REACT_APP_PROFILE_URL}/${user.userData.avatar}`} alt="Profile"/>
                   <Link
                     to='/profile'
                     className="ml-2 px-3 py-2 text-purple-500 text-sm hover:text-white hover:bg-purple-500 rounded-full transition ease-out duration-500"

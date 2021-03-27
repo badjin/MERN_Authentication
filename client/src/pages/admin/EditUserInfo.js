@@ -10,7 +10,7 @@ import { updateUser } from '../../redux'
 import SidePanel from '../../components/SidePanel'
 
 const EditUserInfo = ({ match, history }) => {
-  const selectedUser = useSelector(state => state.admin.users[match.params.id])
+  const selectedUser = useSelector(state => state.admin.users[match.params.id])  
   const dispatch = useDispatch()
   const { register, handleSubmit, errors } = useForm()
 
@@ -30,7 +30,7 @@ const EditUserInfo = ({ match, history }) => {
     const { name, email, role } = selectedUser
     setFormData({ ...formData, name, email, role })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedUser])  
+  }, [])  
 
   const onSubmit = (data) => {
     let payload = {
@@ -52,23 +52,7 @@ const EditUserInfo = ({ match, history }) => {
       history.push('/admin')
       toast.success('Profile Updated Successfully')
     })
-    .catch(error => toast.error(error.response.data.error))
-
-    // const { token } = getLoginInfo()
-    
-    // axios.put(`${process.env.REACT_APP_API_URL}/admin/update`, sendData, {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`
-    //   }
-    // })
-    // .then(res => {
-    //   // dispatch(updateUserData(res.data))
-    //   history.push('/admin')
-    //   toast.success('Profile Updated Successfully')
-    // })
-    // .catch(err => {      
-    //   toast.error(err.response.data.error)
-    // })
+    .catch(error => toast.error(error.response.data.error))   
 
   }
 
@@ -93,7 +77,7 @@ const EditUserInfo = ({ match, history }) => {
               />
               <div className="flex items-center justify-between mt-5">                
                 <label className="w-32 flex flex-col items-center rounded-lg tracking-wide  cursor-pointer has-tooltip">                  
-                  <img className=" w-12 h-12 rounded-full transform hover:scale-110" src={`${process.env.REACT_APP_API_URL}/uploads/${selectedUser.avatar}`} alt="Profile"/>
+                  <img className=" w-12 h-12 rounded-full transform hover:scale-110" src={`${process.env.REACT_APP_PROFILE_URL}/${selectedUser.avatar}`} alt="Profile"/>
                   <span className="tooltip text-center  w-24 text-xs mt-14 bg-gray-600 text-gray-100 px-1 absolute rounded bg-opacity-50 ">Update user's profile image</span>
                 
                   <input type='file' name='avatar' className="hidden" accept='image/*'
@@ -147,7 +131,7 @@ const EditUserInfo = ({ match, history }) => {
                   <span className={`ml-3 ${(!isNameChanged  && !isAvatarChanged && !isRoleChanged) && 'text-gray-400'}`}>Update</span>
                 </button>
                 <button
-                  className='btn btn-submit mt-5'
+                  className='btn mt-5 bg-pink-500 text-gray-100 hover:bg-pink-700'
                   onClick={() => {
                     history.push('/admin')
                   }}

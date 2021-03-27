@@ -1,6 +1,5 @@
 const router = require('express').Router()
-const { requireSignin, adminMiddleware, profileMiddleware } = require('../middlewares/auth.firebase')
-// const { requireSignin, adminMiddleware, profileMiddleware } = require('../middlewares/auth')
+const { requireSignin, adminMiddleware, profileMiddleware } = require('../middlewares/auth')
 const uploadMulter = require('../middlewares/uploadImage')
 const { 
   getUser, 
@@ -8,8 +7,7 @@ const {
   getUsers, 
   updateUsers,
   deleteUser 
-} = require('../controllers/user.firebase')
-// } = require('../controllers/user.controller')
+} = require('../controllers/user')
 
 router.get('/user/:id', requireSignin, getUser)
 router.put('/user/update', 

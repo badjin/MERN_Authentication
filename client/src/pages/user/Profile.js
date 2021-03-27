@@ -32,11 +32,10 @@ const Profile = ({ history }) => {
 
   // Loading Loged in user's info
   useEffect(() => {
-
     const { name, email } = user
     setFormData({ ...formData, name, email })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user])
+  }, [])
 
   const onSubmit = (data) => {
     setValue('password', undefined)
@@ -99,7 +98,7 @@ const Profile = ({ history }) => {
               />
               <div className="flex items-center justify-between mt-5">                
                 <label className="w-32 flex flex-col items-center rounded-lg tracking-wide  cursor-pointer has-tooltip">                  
-                  <img className=" w-12 h-12 rounded-full transform hover:scale-110" src={`${process.env.REACT_APP_API_URL}/uploads/${user.avatar}`} alt="Profile"/>
+                  <img className=" w-12 h-12 rounded-full transform hover:scale-110" src={`${process.env.REACT_APP_PROFILE_URL}/${user.avatar}`} alt="Profile"/>
                   <span className="tooltip text-center  w-24 text-xs mt-14 bg-gray-600 text-gray-100 px-1 absolute rounded bg-opacity-50 ">Upload your profile image</span>
                 
                   <input type='file' name='avatar' className="hidden" accept='image/*'
@@ -186,7 +185,7 @@ const Profile = ({ history }) => {
                   <span className={`ml-3 ${(!isNameChanged && !isAvatarChanged && !isPasswordChange) && 'text-gray-400'}`}>Update</span>
                 </button>
                 <button
-                  className='btn btn-submit mt-5'
+                  className='btn mt-5 bg-pink-500 text-gray-100 hover:bg-pink-700'
                   onClick={() => {
                     history.push('/')
                   }}

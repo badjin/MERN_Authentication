@@ -4,7 +4,7 @@ const path = require('path')
 // Set storage => file name and destinatio
 const storage = multer.diskStorage({
   destination: (req, res, cb) => {
-    cb(null, './uploads')
+    cb(null, `./${process.env.PROFILE_FOLDER}`)
   },
   filename: (req, file, cb) => {
     // Generate unique name for each image

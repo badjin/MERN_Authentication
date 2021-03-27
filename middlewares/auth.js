@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken')
-const User = require('../models/User')
+const path = require('path')
+const Database = path.join(__dirname, `../models/User.${process.env.DATABASE}`)
+const User = require(Database)
 const ErrorResponse = require('../utils/errorResponse')
 const fs = require('fs')
 
@@ -26,7 +28,7 @@ exports.requireSignin = async (req, res, next) => {
       return next(new ErrorResponse('No user found with this id.', 404))
     }
 
-    req.body.id = user._id
+    // req.body.id = user.id
     next()
 
   } catch (error) {
@@ -60,7 +62,7 @@ exports.adminMiddleware = async (req, res, next) => {
     if (user.role !== 'admin') {
       return next(new ErrorResponse('Admin resource. Access denied.', 401))      
     }
-    req.profile = user
+    // req.profile = user
     next()
 
   } catch (error) {

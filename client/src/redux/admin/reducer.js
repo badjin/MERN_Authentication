@@ -5,6 +5,7 @@ import {
 
 const initialState = {
   users: [],
+  totalPages: 0,
   errorMessage: ''
 }
 
@@ -14,7 +15,8 @@ const adminReducer = (state=initialState, action) => {
       case GETUSERS_SUCCESS:      
         return { 
           ...state, 
-          users: action.payload, 
+          users: action.payload.users,
+          totalPages: action.payload.totalPages,
           errorMessage: ''
         }
 

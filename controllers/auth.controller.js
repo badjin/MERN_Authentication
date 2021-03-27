@@ -1,10 +1,19 @@
-const User = require('../models/User')
+const User = require('../models/User.mongodb')
 const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
 const jwt = require('jsonwebtoken')
 const { validationResult } = require('express-validator')
 const { OAuth2Client } = require('google-auth-library')
 const { createToken, successLogin } = require('../utils')
+const dummy = require('mongoose-dummy')
+
+const addDummyUsers = async function() {
+  const ignoredFields = ['id','created_at', '__v', /detail.*_info/];
+  return dummy(User, {
+    ignore: ignoredFields,
+    returnDate: true
+  })
+}
 
 exports.register = async (req, res, next) => {
   const { name, email, password } = req.body
@@ -21,15 +30,18 @@ exports.register = async (req, res, next) => {
 
   try {
 
-    // Dummy User creater
+    // Dummy User creater for MongoDB
     // for (let i = 0; i < 100; i++) {
-    //   let randomUser = dummyUserCreater()
+    //   let randomUser = addDummyUsers()
     //   User.create({
     //     name: randomUser.name,
     //     email: randomUser.email,
     //     password: '12345678'
     //   })
-    // }    
+    // }
+
+    // Dummy User creater for Firebase store
+    // addDummyUsers()
 
     const activationToken = createToken({ name, email, password }, process.env.ACTIVATION_SECRET, process.env.ACTIVATE_EXPIRES_IN)
     const activationURL = `${process.env.FRONTEND_URL}/users/activate/${activationToken}`
@@ -78,12 +90,12 @@ exports.activationEmail = async (req, res, next) => {
         const user = new User({ name, email, password })
         User.create(user)
           .then(() => {
-            const token = createToken({ id: user._id }, process.env.AUTH_SECRET, process.env.AUTH_EXPIRES_IN)
+            const token = createToken({ id: user.id }, process.env.AUTH_SECRET, process.env.AUTH_EXPIRES_IN)
             res.status(200).json({
               success: true,
               message: 'Your account has been successfully registered.',
               user: { 
-                id: user._id,
+                id: user.id,
                 email: user.email,
                 name: user.name, 
                 role: user.role,
@@ -155,7 +167,7 @@ exports.forgotPassword = async (req, res, next) => {
     }
 
     // Reset Token Gen and add to database hashed (private) version of token
-    const token = createToken({id: user._id}, process.env.RESET_SECRET, process.env.RESET_EXPIRES_IN)
+    const token = createToken({id: user.id}, process.env.RESET_SECRET, process.env.RESET_EXPIRES_IN)
     
     // Create reset url to email to provided email
     const resetUrl = `${process.env.FRONTEND_URL}/users/password/reset/${token}`

@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const dummy = require('mongoose-dummy')
 
 exports.createToken = (payload, secret, expires) => jwt.sign(payload, secret, {expiresIn: expires})
 
@@ -17,14 +16,6 @@ exports.successLogin = (res, user) => {
       googleAccount: user.googleAccount
     },
     token
-  })
-}
-
-exports.dummyUserCreater = () => {
-  const ignoredFields = ['_id','created_at', '__v', /detail.*_info/];
-  return dummy(User, {
-    ignore: ignoredFields,
-    returnDate: true
   })
 }
 

@@ -3,10 +3,12 @@ const jwt = require('jsonwebtoken')
 const { validationResult } = require('express-validator')
 const { OAuth2Client } = require('google-auth-library')
 
+const path = require('path')
+const Database = path.join(__dirname, `../models/User.${process.env.DATABASE}`)
+const User = require(Database)
+
 const ErrorResponse = require('../utils/errorResponse')
 const sendEmail = require('../utils/sendEmail')
-const { db } = require('../config/dbFirebase')
-const { findByEmail, findOne, save, update } = require('../models/UserFirebase')
 const { createToken, successLogin, getHashedPassword } = require('../utils')
 
 
@@ -20,12 +22,16 @@ exports.register = async (req, res, next) => {
     return next(new ErrorResponse(firstError, 422))
   } else {
 
-    const user = await findByEmail(req.body.email)
+    const user = await User.findByEmail(req.body.email)
     if(user) return next(new ErrorResponse('An account with this email already exist.', 400))
     
   }  
 
-  try {
+  try {    
+
+    // Dummy User creater for Firebase store
+    // User.addDummyUsers()
+
     const activationToken = createToken({ name, email, password }, process.env.ACTIVATION_SECRET, process.env.ACTIVATE_EXPIRES_IN)
     const activationURL = `${process.env.FRONTEND_URL}/users/activate/${activationToken}`
 
@@ -83,9 +89,9 @@ exports.activationEmail = async (req, res, next) => {
       }
     })
 
-    await save(saveUser)
+    await User.createCustom(saveUser)
 
-    const user = await findByEmail(saveUser.email)
+    const user = await User.findByEmail(saveUser.email)
     if(!user) return next(new ErrorResponse('Failure to register.', 400))   
     
     const LoginToken = createToken({ id: user.id }, process.env.AUTH_SECRET, process.env.AUTH_EXPIRES_IN)
@@ -119,7 +125,7 @@ exports.login = async (req, res, next) => {
   }
 
   try {
-    const user = await findByEmail(email)
+    const user = await User.findByEmail(email)
     if(!user)
       return next(new ErrorResponse('No account with this email.', 400))
     
@@ -150,7 +156,7 @@ exports.forgotPassword = async (req, res, next) => {
   }
 
   try {
-    const user = await findByEmail(email)
+    const user = await User.findByEmail(email)
     
     if(!user){
       return next(new ErrorResponse('This email is not registered.', 404))
@@ -175,7 +181,8 @@ exports.forgotPassword = async (req, res, next) => {
 
     try {
       user.resetPasswordToken = token
-      await db.collection('users').doc(user.id).set(user)
+      await User.updateCustom(user)
+      // await db.collection('users').doc(user.id).set(user)
 
       sendEmail({
         // to: user.email,
@@ -191,7 +198,7 @@ exports.forgotPassword = async (req, res, next) => {
 
     } catch (error) {
       user.resetPasswordToken = ''
-      await db.collection('users').doc().set(user)
+      await User.updateCustom(user)
       return next(new ErrorResponse('Email could not be sent.', 404))
     }
 
@@ -221,7 +228,7 @@ exports.resetPassword = async (req, res, next) => {
       return next(new ErrorResponse('This link has been expired. Please try again.', 401))
     }   
 
-    const user = await findOne('resetPasswordToken', resetPasswordToken )
+    const user = await User.findByField( 'resetPasswordToken', resetPasswordToken )
     if(!user){
       return next(new ErrorResponse('Invalid Token', 400))
     }
@@ -229,7 +236,7 @@ exports.resetPassword = async (req, res, next) => {
     newPassword = await getHashedPassword(newPassword)
     user.password = newPassword
     user.resetPasswordToken = ''
-    await update(user)
+    await User.updateCustom(user)
     
     res.status(200).json({
       success: true,
@@ -254,11 +261,11 @@ exports.googleLogin = async (req, res, next) => {
     }
 
     try {      
-      const user = await findByEmail(email)
+      const user = await User.findByEmail(email)
     
       if (!user) {
         let password = email + process.env.AUTH_SECRET
-        newPassword = await getHashedPassword(newPassword)
+        password = await getHashedPassword(password)
         
         const newUser =  {
           name, email, password,
@@ -268,9 +275,9 @@ exports.googleLogin = async (req, res, next) => {
           googleAccount: true
         }
 
-        await save(newUser)
+        await User.createCustom(newUser)
 
-        const user = await findByEmail(newUser.email)
+        const user = await User.findByEmail(newUser.email)
         if(!user) return next(new ErrorResponse('User signin failed with Google.', 400))
     
         successLogin(res, user)        

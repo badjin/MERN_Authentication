@@ -1,9 +1,7 @@
 const jwt = require('jsonwebtoken')
-const fs = require('fs')
-
+const User = require('../models/User.firebase')
 const ErrorResponse = require('../utils/errorResponse')
-const { findById } = require('../models/UserFirebase')
-
+const fs = require('fs')
 
 exports.requireSignin = async (req, res, next) => {
   let token
@@ -23,7 +21,7 @@ exports.requireSignin = async (req, res, next) => {
       return next(new ErrorResponse('Token verification failed, authorization denied.', 401))
     }
     
-    const user = await findById(verified.id)
+    const user = await User.findById(verified.id)
     if(!user) next(new ErrorResponse('No user found with this ID.', 404))
 
     // req.body.id = user.id
@@ -31,6 +29,7 @@ exports.requireSignin = async (req, res, next) => {
     next()
 
   } catch (error) {
+    console.log(error)
     return next(new ErrorResponse('Token has expired. Please login again.', 401))
   }
 }
@@ -53,7 +52,7 @@ exports.adminMiddleware = async (req, res, next) => {
       return next(new ErrorResponse('Token verification failed, authorization denied.', 401))
     }
     
-    const user = await findById(verified.id)
+    const user = await User.findById(verified.id)
     if(!user) next(new ErrorResponse('No user found with this ID.', 404))
 
     if (user.role !== 'admin') {

@@ -6,7 +6,9 @@ const errorHandler = require('./middlewares/error')
 const cors = require('cors')
 
 // Connect DB
-// connectDB()
+if(process.env.DATABASE == 'mongodb'){
+  connectDB()
+}  
 
 const app = express()
 

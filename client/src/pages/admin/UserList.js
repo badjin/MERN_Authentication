@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 
 import { getUsers, deleteUser } from '../../redux'
 import { getLoginInfo } from '../../helpers/auth'
 import { DeleteModal } from '../../components/Modal'
+import Pagenation from '../../components/Pagenation'
 
-const TableRow = ({ user, index, onEditBtnClick, onDeleteBtnClick }) => {
+const TableRow = ({ user, index, pageNumber, onEditBtnClick, onDeleteBtnClick }) => {
   const role = {
     'admin': 'bg-yellow-600',
     'staff': 'bg-green-600',
@@ -16,13 +17,13 @@ const TableRow = ({ user, index, onEditBtnClick, onDeleteBtnClick }) => {
     <tr className={`border-b border-gray-200 hover:bg-gray-100 ${(index%2 && 'bg-gray-50')}`}>
       <td className="hidden lg:block py-3 md:px-6 px-3 text-left whitespace-nowrap">
         <div className="flex items-center">          
-          <span className="font-medium">{index+1}</span>
+          <span className="font-medium">{pageNumber*10+index+1}</span>
         </div>
       </td>
       <td className="py-3 md:px-6 px-3 text-left">
         <div className="flex items-center">
           <div className="mr-2">
-            <img className="w-8 h-8 rounded-full" src={`${process.env.REACT_APP_API_URL}/uploads/${user.avatar}`} alt="Profile"/>
+            <img className="w-8 h-8 rounded-full" src={`${process.env.REACT_APP_PROFILE_URL}/${user.avatar}`} alt="Profile"/>
           </div>
           <span>{user.name}</span>
         </div>
@@ -55,33 +56,38 @@ const TableRow = ({ user, index, onEditBtnClick, onDeleteBtnClick }) => {
 }
 
 const Admin = ({ history }) => {
-  const users = useSelector(state => state.admin.users)
   const dispatch = useDispatch()
-  const [usersData, setUsersData] = useState([]) 
+  const [usersData, setUsersData] = useState([])
+  const [totalPages, setTotalPages] = useState(0)
   const [isModal, setIsModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState('')
 
+  const [pageNumber, setPageNumber] = useState(0)
+
   // Loading all user's info
   useEffect(() => {
-    dispatch(getUsers(getLoginInfo().token))
+    dispatch(getUsers(pageNumber, getLoginInfo().token))
     .then(res => {
-      setUsersData(res)
+      setUsersData(res.users)
+      setTotalPages(res.totalPages)
     })
     .catch(error => toast.error(error.response.data.error))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [users])
-
+  }, [pageNumber])
+  
   const deleteSelectedUser = () => {    
     dispatch(deleteUser(selectedUser, getLoginInfo().token))
-    .then(users => {
-      setUsersData(users)
+    .then(res => {
+      setUsersData(res.users)
+      setTotalPages(res.totalPages)
+      setPageNumber(0)
     })
     .catch(error => toast.error(error.response.data.error))
   }
 
   const editSelectedUser = (index) => {
     history.push(`/admin/users/${index}`)
-  }
+  }  
 
   return (
     <div className='bj-container'>
@@ -101,17 +107,23 @@ const Admin = ({ history }) => {
                 </thead>
                 <tbody className="text-gray-600 text-sm font-light">                  
                   { usersData.map((user, index) => {
-                    return <TableRow key={index} user={user} index={index} onDeleteBtnClick={(user) => {
-                      setSelectedUser(user)
-                      setIsModal(true)
-                    }}
-                    onEditBtnClick={(index) => {
-                      editSelectedUser(index)
-                    }}
-                  />
+                    return <TableRow 
+                      key={index} 
+                      user={user} 
+                      index={index} 
+                      pageNumber={pageNumber} 
+                      onDeleteBtnClick={(user) => {
+                        setSelectedUser(user)
+                        setIsModal(true)
+                      }}
+                      onEditBtnClick={(index) => {
+                        editSelectedUser(index)
+                      }}
+                    />
                   })}                 
                 </tbody>
               </table>
+              {/* Delete Dialog */}
               { isModal && 
                 <DeleteModal title={selectedUser.name}               
                   confirmClick={() => {
@@ -124,6 +136,11 @@ const Admin = ({ history }) => {
             </div>
           </div>
         </div>
+        <Pagenation 
+          totalPages={totalPages}
+          pageNumber={pageNumber}
+          onSetPageNumber={setPageNumber}
+        />
       </div>
     </div>
   )

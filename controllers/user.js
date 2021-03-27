@@ -1,5 +1,7 @@
 const fs = require('fs')
-const { findAll, findById, update, deleteUserFromDB, addDummyUsers } = require('../models/UserFirebase')
+const path = require('path')
+const Database = path.join(__dirname, `../models/User.${process.env.DATABASE}`)
+const User = require(Database)
 const { getHashedPassword } = require('../utils')
 
 
@@ -9,7 +11,7 @@ exports.getUser = async (req, res, next) => {
   if(!userId) return next(new ErrorResponse('No user found with this ID.', 404))
 
   try {
-    const user = await findById(userId)
+    const user = await User.findById(userId)
 
     if(!user) {
       return next(new ErrorResponse('No user found with this ID.', 404))
@@ -35,13 +37,13 @@ exports.updateUser = async (req, res,next) => {
   let { id, name, password, avatar } = req.body
   
   try {
-    const user = await findById(id)
+    const user = await User.findById(id)
     user.name = name
     if(avatar) {
       // Before updating, delete old profile image
       // Users have only one image for profile
       if(user.avatar !== 'default.png'){
-        fs.unlink(`./uploads/${user.avatar}`, (error) => {
+        fs.unlink(`./${process.env.PROFILE_FOLDER}/${user.avatar}`, (error) => {
           if(error) console.log(error)
         })
       }
@@ -53,7 +55,7 @@ exports.updateUser = async (req, res,next) => {
       user.password = password
     }
     
-    await update(user)
+    await User.updateCustom(user)
 
     res.status(200).json({
       success: true,
@@ -73,45 +75,25 @@ exports.updateUser = async (req, res,next) => {
 
 exports.getUsers = async (req, res, next) => {
 
-  try {
-    const users = await findAll()
-    if(!users) {
-      return next(new ErrorResponse('No user found in Database', 404))
-    }
-
-    res.status(200).json({
-      success: true,
-      users
-    })
-  } catch (error) {
-    next(error)
-  }
+  await User.sendUsers(req, res, next)
 }
 
 exports.deleteUser = async (req, res, next) => {
 
   try {
     // await addDummyUsers()
-    const user = await deleteUserFromDB(req.body.id)
+    const user = await User.deleteUserFromDB(req.body.id)
     if(!user) {
       return next(new ErrorResponse('Failed to delete the user.', 404))
     }
 
     if(req.body.avatar != 'default.png') {
-      fs.unlink(`./uploads/${req.body.avatar}`, (error) => {
+      fs.unlink(`./${process.env.PROFILE_FOLDER}/${req.body.avatar}`, (error) => {
         if(error) console.log(error)
       })
     }
 
-    const users = await findAll()
-    if(!users) {
-      return next(new ErrorResponse('No user found in Database', 404))
-    }
-    
-    res.status(200).json({
-      success: true,
-      users
-    })
+    await User.sendUsers(req, res, next)
   } catch (error) {
     next(error)
   }
@@ -121,13 +103,14 @@ exports.updateUsers = async (req, res, next) => {
   const { id, name, avatar, role } = req.body
   
   try {
-    const user = await findById(id)
+    const user = await User.findById(id)
     user.name = name
+
     if(avatar) {
       // Before updating, delete old profile image
       // Users have only one image for profile
       if(user.avatar !== 'default.png'){
-        fs.unlink(`./uploads/${user.avatar}`, (error) => {
+        fs.unlink(`./${process.env.PROFILE_FOLDER}/${user.avatar}`, (error) => {
           if(error) console.log(error)
         })
       }
@@ -136,18 +119,9 @@ exports.updateUsers = async (req, res, next) => {
 
     user.role = role
 
-    await update(user)
+    await User.updateCustom(user)
 
-    const users = await findAll()
-    if(!users) {
-      return next(new ErrorResponse('No user found in Database', 404))
-    }
-
-    res.status(200).json({
-      success: true,
-      users
-    })
-    
+    await User.sendUsers(req, res, next)    
   } catch (error) {
     next(error)
   }
