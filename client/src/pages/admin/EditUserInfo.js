@@ -68,7 +68,7 @@ const EditUserInfo = ({ match, history }) => {
             className='w-full my-6 flex-1 text-indigo-500'
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className='mx-auto max-w-xs relative '>                
+            <div className='mx-auto max-w-xs'>                
               <input
                 disabled
                 className='input-field text-gray-400'
@@ -77,7 +77,7 @@ const EditUserInfo = ({ match, history }) => {
               />
               <div className="flex items-center justify-between mt-5">                
                 <label className="w-32 flex flex-col items-center rounded-lg tracking-wide  cursor-pointer has-tooltip">                  
-                  <img className=" w-12 h-12 rounded-full transform hover:scale-110" src={`${process.env.REACT_APP_PROFILE_URL}/${selectedUser.avatar}`} alt="Profile"/>
+                  <img className=" w-12 h-12 rounded-full object-cover" src={`${process.env.REACT_APP_PROFILE_URL}/${selectedUser.avatar}`} alt="Profile"/>
                   <span className="tooltip text-center  w-24 text-xs mt-14 bg-gray-600 text-gray-100 px-1 absolute rounded bg-opacity-50 ">Update user's profile image</span>
                 
                   <input type='file' name='avatar' className="hidden" accept='image/*'
@@ -105,7 +105,7 @@ const EditUserInfo = ({ match, history }) => {
                 { roleArray.map((v, index) => (
                   <div className='flex justify-center items-center space-x-2 p-2 mt-5' key={index} >
                     <input 
-                      className='transition-all duration-300 ease-in-out transform tracking-wide hover:scale-150 cursor-pointer' 
+                      className='tracking-wide cursor-pointer'
                       type="radio" 
                       value={v}                      
                       checked={formData.role === v}
@@ -133,7 +133,7 @@ const EditUserInfo = ({ match, history }) => {
                 <button
                   className='btn mt-5 bg-pink-500 text-gray-100 hover:bg-pink-700'
                   onClick={() => {
-                    history.push('/admin')
+                    history.push('/admin/users')
                   }}
                 >
                   <i className='fas fa-sign-in-alt fa 1x w-6  -ml-2' />

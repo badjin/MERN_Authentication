@@ -89,7 +89,7 @@ const Profile = ({ history }) => {
             className='w-full my-6 flex-1 text-indigo-500'
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className='mx-auto max-w-xs relative '>                
+            <div className='mx-auto max-w-xs'>                
               <input
                 disabled
                 className='input-field text-gray-400'
@@ -98,7 +98,7 @@ const Profile = ({ history }) => {
               />
               <div className="flex items-center justify-between mt-5">                
                 <label className="w-32 flex flex-col items-center rounded-lg tracking-wide  cursor-pointer has-tooltip">                  
-                  <img className=" w-12 h-12 rounded-full transform hover:scale-110" src={`${process.env.REACT_APP_PROFILE_URL}/${user.avatar}`} alt="Profile"/>
+                  <img className="w-12 h-12 rounded-full object-cover" src={`${process.env.REACT_APP_PROFILE_URL}/${user.avatar}`} alt="Profile"/>
                   <span className="tooltip text-center  w-24 text-xs mt-14 bg-gray-600 text-gray-100 px-1 absolute rounded bg-opacity-50 ">Upload your profile image</span>
                 
                   <input type='file' name='avatar' className="hidden" accept='image/*'

@@ -94,7 +94,7 @@ const Admin = ({ history }) => {
       <div className="lg:w-full p-3 md:p-6">
         <div className="flex items-center justify-center bg-white font-sans overflow-hidden">
           <div className="w-full ">
-            <div className="bg-white shadow-md rounded my-6">
+            <div className="bg-white shadow-md rounded my-4">
               <table className="min-w-max w-full table-auto">
                 <thead>
                   <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">

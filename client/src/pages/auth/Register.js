@@ -30,7 +30,7 @@ const Register = () => {
           <h1 className='text-2xl xl:text-3xl font-extrabold'>
             Sign Up
           </h1>
-          <div className='w-full flex-1 my-6 text-indigo-500'>
+          <div className='w-full flex-1 my-4 text-indigo-500'>
             <form
               className='mx-auto max-w-xs relative'
               onSubmit={handleSubmit(onSubmit)}
@@ -89,12 +89,12 @@ const Register = () => {
                   <span className='ml-3'>Sign Up</span>
                 </button>
               
-              <div className='my-6 border-b text-center'>
+              <div className='my-2 border-b text-center'>
                 <div className='leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2'>
                   Or sign with email or social login
                 </div>
               </div>
-              <div className='flex flex-col items-center mb-6'>
+              <div className='flex flex-col items-center'>
                 <Link
                   className='btn-shadow mt-5'
                   to='/login'

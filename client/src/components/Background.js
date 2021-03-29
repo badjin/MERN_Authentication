@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-
-const SidePanel = () => {
+const Background = ({message}) => {  
   const bgImages = useSelector(state => state.bgImage.bgImages)
-  const location = useLocation()
   const defaultImage = 'https://source.unsplash.com/random'
   const [ backgroundImage, setBackgroundImage ] = useState(defaultImage)
 
@@ -27,17 +24,14 @@ const SidePanel = () => {
     }
     setBackgroundImage(tempImage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
-
+  }, [])
   return (
-    <div className='w-full rounded-r-xl bg-cover bg-center bg-no-repeat' style={{ backgroundImage: `url(${backgroundImage})` }} >
-      <div className="flex flex-col justify-end h-full rounded-r-xl absoluteinset-0 bg-indigo-900 bg-opacity-30">            
-        <h1 className='p-12 text-left text-xl text-gray-100 tracking-wide'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia quam laboriosam dolorum et quasi accusamus? Eius aliquam soluta illum quasi laborum suscipit consectetur id reiciendis! Veniam alias necessitatibus accusantium distinctio.</h1>
-        
+    <div className='w-full bg-cover bg-center bg-no-repeat' style={{ backgroundImage: `url(${backgroundImage})` }} >
+      <div className="flex justify-center items-center h-full rounded-r-xl absoluteinset-0 bg-indigo-900 bg-opacity-30">            
+        <h1 className='p-12 lg:w-1/2 xl:w-5/12 p-3 sm:p-6 font-bold text-center text-2xl text-gray-100 tracking-wide'>{message}</h1>        
       </div>
     </div>
-
   )
 }
 
-export default SidePanel
+export default Background

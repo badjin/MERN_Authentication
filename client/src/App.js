@@ -29,6 +29,7 @@ import NavBar from './components/Navbar'
 import Footer from './components/Footer'
 
 import { getLoginInfo } from './helpers/auth'
+import SiteConfig from './pages/admin/SiteConfig'
 
 
 const App = () => {
@@ -83,7 +84,8 @@ const App = () => {
           <GuestOnlyRoute condition={isAuth} exact path='/users/password/reset/:token' component={ResetPassword} />
           
           <PrivateRoute condition={isAuth} exact path="/profile" component={Profile} />
-          <AdminRoute condition={isAuth} exact path="/admin" component={Admin} />
+          <AdminRoute condition={isAuth} exact path="/admin/users" component={Admin} />
+          <AdminRoute condition={isAuth} exact path="/admin/setting" component={SiteConfig} />
           <AdminRoute condition={isAuth} exact path="/admin/users/:id" component={EditUserInfo} />
 
           <Route exact path='/about' render={props => <About {...props} />} />
