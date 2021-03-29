@@ -49,7 +49,7 @@ const EditUserInfo = ({ match, history }) => {
     
     dispatch(updateUser(sendData, getLoginInfo().token))
     .then(res => {
-      history.push('/admin')
+      history.push('/admin/users')
       toast.success('Profile Updated Successfully')
     })
     .catch(error => toast.error(error.response.data.error))   
@@ -57,7 +57,7 @@ const EditUserInfo = ({ match, history }) => {
   }
 
   return (
-        <div className='bj-container'>
+    <div className='bj-container'>
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
         <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>
@@ -127,7 +127,7 @@ const EditUserInfo = ({ match, history }) => {
                   disabled={!isNameChanged && !isAvatarChanged && !isRoleChanged}
                   className='btn btn-submit mt-5'
                 >
-                  <i className={`fas fa-user-plus fa 1x w-6 ${(!isNameChanged  && !isAvatarChanged && !isRoleChanged) && 'text-gray-400'} -ml-2`} />
+                  <i className={`fas fa-edit fa 1x w-6 ${(!isNameChanged  && !isAvatarChanged && !isRoleChanged) && 'text-gray-400'} -ml-2`} />
                   <span className={`ml-3 ${(!isNameChanged  && !isAvatarChanged && !isRoleChanged) && 'text-gray-400'}`}>Update</span>
                 </button>
                 <button

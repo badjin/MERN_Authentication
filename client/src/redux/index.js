@@ -8,11 +8,13 @@ export {
 } from './user/actions'
 
 export { 
-  setBgImages
+  getBgImagesFromUnsplash
 } from './bgImage/actions'
 
 export {
   getUsers,
+  getSettings,
+  updateSettings,
   deleteUser,
   updateUser,
   clearUsersData

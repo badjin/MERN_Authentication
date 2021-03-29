@@ -13,8 +13,7 @@ const AdminMenu = ({user, onLogout}) => {
     <div className='relative '>
       <div className='flex items-center space-x-3'>
         <button           
-          className='relative z-10 py-5 px-3 font-bold text-gray-700 hover:bg-gray-500 hover:text-yellow-200 focus:outline-none uppercase'
-          activeClassName='active-navbar' 
+          className='relative z-10 py-5 px-3 font-bold text-gray-700 hover:bg-gray-500 hover:text-yellow-200 focus:outline-none uppercase'          
           onClick={() => {setIsOpen(!isOpen)}}>
           Admin 
         </button>        

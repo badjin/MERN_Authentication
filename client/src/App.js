@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 
-import { updateLoginUser, logoutUser, setBgImages } from './redux'
+import { updateLoginUser, logoutUser, getBgImagesFromUnsplash, getSettings } from './redux'
 
 import PrivateRoute from './routes/PrivateRoute'
 import AdminRoute from './routes/AdminRoute'
@@ -37,7 +37,7 @@ const App = () => {
   const location = useLocation()
   const [isAuth, setIsAuth] = useState('false')
 
-  const checkTokenExpired = async () => {    
+  const checkTokenExpired = async () => {
     const loginInfo = getLoginInfo()
     if(!loginInfo) return false 
 
@@ -62,12 +62,15 @@ const App = () => {
   }  
 
   useEffect(() => {
-    dispatch(setBgImages('board game'))
+    dispatch(getSettings())
+    .then(res => {
+      dispatch(getBgImagesFromUnsplash(res.theme))
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
+  
   useEffect(() => {
-    checkTokenExpired()
+    checkTokenExpired()    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[location])
 
@@ -85,7 +88,7 @@ const App = () => {
           
           <PrivateRoute condition={isAuth} exact path="/profile" component={Profile} />
           <AdminRoute condition={isAuth} exact path="/admin/users" component={Admin} />
-          <AdminRoute condition={isAuth} exact path="/admin/setting" component={SiteConfig} />
+          <AdminRoute condition={isAuth} exact path="/admin/settings" component={SiteConfig} />
           <AdminRoute condition={isAuth} exact path="/admin/users/:id" component={EditUserInfo} />
 
           <Route exact path='/about' render={props => <About {...props} />} />

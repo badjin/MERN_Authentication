@@ -19,7 +19,7 @@ const Login = () =>  {
   const setAuth = (res) => {
     authenticate(res, () => {
       toast.success(`Hey ${res.user.name}, Welcome back!`)
-      if(res.success && res.user.role === 'admin') history.push('/admin')
+      if(res.success && res.user.role === 'admin') history.push('/admin/users')
       else history.push('/')
     })
   }

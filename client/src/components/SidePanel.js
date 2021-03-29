@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { getSettings, getBgImagesFromUnsplash } from '../redux'
 
 
 const SidePanel = () => {
+  const dispatch = useDispatch()
   const bgImages = useSelector(state => state.bgImage.bgImages)
   const location = useLocation()
   const defaultImage = 'https://source.unsplash.com/random'
   const [ backgroundImage, setBackgroundImage ] = useState(defaultImage)
-
+  
   useEffect(() => {
     if(typeof(bgImages) === 'undefined') {
       setBackgroundImage(defaultImage)
@@ -16,16 +18,21 @@ const SidePanel = () => {
     }
 
     if(!bgImages.length) {
-      setBackgroundImage(defaultImage)
-      return
+      dispatch(getSettings())
+      .then(res => {
+        dispatch(getBgImagesFromUnsplash(res.theme))
+        .then(res => {
+          setBackgroundImage(res[Math.floor(Math.random() * 20)].urls.regular)          
+        })        
+      })
+    } else {
+      let tempImage = ''
+      while(true){
+        tempImage = bgImages[Math.floor(Math.random() * 20)].urls.regular
+        if(backgroundImage !== tempImage) break
+      }
+      setBackgroundImage(tempImage)
     }
-
-    let tempImage = ''
-    while(true){
-      tempImage = bgImages[Math.floor(Math.random() * 20)].urls.regular
-      if(backgroundImage !== tempImage) break
-    }
-    setBackgroundImage(tempImage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 

@@ -1,4 +1,6 @@
 const router = require('express').Router()
+const fs = require('fs')
+
 const { requireSignin, adminMiddleware, profileMiddleware } = require('../middlewares/auth')
 const uploadMulter = require('../middlewares/uploadImage')
 const { 
@@ -8,6 +10,7 @@ const {
   updateUsers,
   deleteUser 
 } = require('../controllers/user')
+const settings = require('../config/settings.json')
 
 router.get('/user/:id', requireSignin, getUser)
 router.put('/user/update', 
@@ -17,7 +20,31 @@ router.put('/user/update',
   updateUser
 )
 
+router.get('/settings', (req, res, next) => {
+  try {    
+    res.status(200).json({
+      success: true,
+      settings
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
 router.get('/admin/users', adminMiddleware, getUsers)
+
+router.put('/admin/settings/update', adminMiddleware, async (req, res, next) => {
+  try {
+    await fs.writeFileSync('./config/settings.json', JSON.stringify(req.body), 'utf8')
+
+    res.status(200).json({
+      success: true
+    })
+  } catch (error) {
+    next(error)    
+  }
+})
+
 router.put('/admin/update', 
   adminMiddleware,
   uploadMulter, 

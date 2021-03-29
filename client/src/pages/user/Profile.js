@@ -181,7 +181,7 @@ const Profile = ({ history }) => {
                   disabled={!isNameChanged && !isAvatarChanged && !isPasswordChange}
                   className='btn btn-submit mt-5'
                 >
-                  <i className={`fas fa-user-plus fa 1x w-6 ${(!isNameChanged && !isAvatarChanged && !isPasswordChange) && 'text-gray-400'} -ml-2`} />
+                  <i className={`fas fa-edit fa 1x w-6 ${(!isNameChanged && !isAvatarChanged && !isPasswordChange) && 'text-gray-400'} -ml-2`} />
                   <span className={`ml-3 ${(!isNameChanged && !isAvatarChanged && !isPasswordChange) && 'text-gray-400'}`}>Update</span>
                 </button>
                 <button

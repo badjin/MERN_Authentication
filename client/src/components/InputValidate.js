@@ -8,8 +8,8 @@ const InputValidate = ({filedName, type}) => {
       case 'required':
         message = `This ${filedName} field is required`
         break;
-      case 'minLength':
-        message = `This ${filedName} must have at least ${filedName === 'name' ? '3' : '8'} characters`
+      case 'minLength':        
+        message = `This filed name must have at least ${filedName === 'password' ? '8' : '3'} characters`
         break;
       case 'pattern':
         message = `Please provide a valid ${filedName}`
