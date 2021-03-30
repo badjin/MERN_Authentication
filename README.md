@@ -16,7 +16,7 @@ Ultimate Authentication with Email & Google with diferent roles, email verificat
 > - Mailing: emailjs
 > - validator: react-hook-form
 > - css : tailwindcss
-> - authentication : using localstore / cookie
+> - Random background : Unsplash api
 
 ### Install
 ```
