@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useForm } from "react-hook-form"
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
@@ -12,25 +12,32 @@ import SidePanel from '../../components/SidePanel'
 const EditUserInfo = ({ match, history }) => {
   const selectedUser = useSelector(state => state.admin.users[match.params.id])  
   const dispatch = useDispatch()
-  const { register, handleSubmit, errors } = useForm()
-
-  const [isNameChanged, setIsNameChanged] = useState(false)
-  const [isAvatarChanged, setIsAvatarChanged] = useState(false)
-  const [isRoleChanged, setIsRoleChanged] = useState(false)
-  const [formData, setFormData] = useState({
-    email: '',
-    name: '',
-    role: ''
+  // const { register, handleSubmit, errors } = useForm()
+  const { 
+    register, 
+    handleSubmit,
+    errors,
+    watch,
+    formState
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      email: selectedUser.email,
+      name: selectedUser.name,
+      role: selectedUser.role,
+      avatar: ''
+    }
   })
+  const [isFiledChanged, setIsFieldChanged] = useState(false)
+  const [currentRole, setCurrentRole] = useState(selectedUser.role)
 
   const roleArray = ['admin', 'staff', 'customer']
+  const role = useRef()
+  role.current = watch("role")
 
-  // Load selected user 
-  useEffect(() => {
-    const { name, email, role } = selectedUser
-    setFormData({ ...formData, name, email, role })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])  
+  useEffect(() => {    
+    setIsFieldChanged(formState.dirtyFields.name || formState.dirtyFields.avatar || formState.dirtyFields.role)
+  }, [formState])
 
   const onSubmit = (data) => {
     let payload = {
@@ -80,26 +87,18 @@ const EditUserInfo = ({ match, history }) => {
                   <img className=" w-12 h-12 rounded-full object-cover" src={`${process.env.REACT_APP_PROFILE_URL}/${selectedUser.avatar}`} alt="Profile"/>
                   <span className="tooltip text-center  w-24 text-xs mt-14 bg-gray-600 text-gray-100 px-1 absolute rounded bg-opacity-50 ">Update user's profile image</span>
                 
-                  <input type='file' name='avatar' className="hidden" accept='image/*'
-                    onChange={ e => setIsAvatarChanged(e.target.files[0].name)} 
-                    ref={register} 
-                  />
+                  <input type='file' name='avatar' className="hidden" accept='image/*' ref={register} />
                 </label>
                 <input
                   name='name'
                   className='input-field ml-5'
                   type='text'
                   placeholder='Name'
-                  onChange={e => {
-                    setIsNameChanged(e.target.value !== selectedUser.name)
-                    setFormData({ ...formData, name: e.target.value })
-                  }}
-                  value={formData.name}
                   ref={register({ required: true, minLength: 3 })}
-                />
-                {errors.name && 
-                <InputValidate filedName='name' type={errors.name.type} />}
+                />                
               </div>
+              {errors.name && 
+              <InputValidate filedName='name' type={errors.name.type} />}
               
               <div className='flex items-center justify-center'>
                 { roleArray.map((v, index) => (
@@ -107,16 +106,13 @@ const EditUserInfo = ({ match, history }) => {
                     <input 
                       className='tracking-wide cursor-pointer'
                       type="radio" 
-                      value={v}                      
-                      checked={formData.role === v}
-                      onChange={e => {
-                        setIsRoleChanged(e.target.value !== selectedUser.role)
-                        setFormData({ ...formData, role: e.target.value })
-                      }}
+                      value={v}
+                      checked={currentRole === v}
+                      onChange={e => setCurrentRole(e.target.value)}
                       name='role'
                       ref={register}
                     />
-                    <span className={`${(formData.role === v) && 'text-indigo-500'} uppercase text-gray-500`}>{v}</span>
+                    <span className={`${(currentRole === v) && 'text-indigo-500'} uppercase text-gray-500`}>{v}</span>
                   </div>
                 ))}
               </div>
@@ -124,11 +120,11 @@ const EditUserInfo = ({ match, history }) => {
               <div className="flex justify-between space-x-2">
                 <button
                   type='submit'
-                  disabled={!isNameChanged && !isAvatarChanged && !isRoleChanged}
+                  disabled={!isFiledChanged}
                   className='btn btn-submit mt-5'
                 >
-                  <i className={`fas fa-edit fa 1x w-6 ${(!isNameChanged  && !isAvatarChanged && !isRoleChanged) && 'text-gray-400'} -ml-2`} />
-                  <span className={`ml-3 ${(!isNameChanged  && !isAvatarChanged && !isRoleChanged) && 'text-gray-400'}`}>Update</span>
+                  <i className={`fas fa-edit fa 1x w-6 ${(!isFiledChanged) && 'text-gray-400'} -ml-2`} />
+                  <span className={`ml-3 ${(!isFiledChanged) && 'text-gray-400'}`}>Update</span>
                 </button>
                 <button
                   className='btn mt-5 bg-pink-500 text-gray-100 hover:bg-pink-700'

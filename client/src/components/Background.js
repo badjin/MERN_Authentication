@@ -34,7 +34,7 @@ const Background = ({message}) => {
   }, [])
   return (
     <div className='w-full bg-cover bg-center bg-no-repeat' style={{ backgroundImage: `url(${backgroundImage})` }} >
-      <div className="flex justify-center items-center h-full rounded-r-xl absoluteinset-0 bg-indigo-900 bg-opacity-30">            
+      <div className="flex justify-center items-center h-full absoluteinset-0 bg-indigo-900 bg-opacity-30">            
         <h1 className='p-12 lg:w-1/2 xl:w-5/12 p-3 sm:p-6 font-bold text-center text-2xl text-gray-100 tracking-wide'>{message}</h1>        
       </div>
     </div>

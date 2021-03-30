@@ -12,39 +12,41 @@ const Profile = ({ history }) => {
   const user = useSelector(state => state.user.userData)
   const dispatch = useDispatch()
 
-  const { register, handleSubmit, watch, errors, setValue, clearErrors } = useForm()
-  const [formData, setFormData] = useState({
-    email: '',
-    name: ''
+  const { 
+    register, 
+    handleSubmit, 
+    watch, 
+    errors, 
+    setValue, 
+    clearErrors,
+    reset,
+    formState
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      email: user.email,
+      name: user.name,
+      password: '',
+      confirmPassword: '',
+      avatar: ''
+    }
   })
-  const [isNameChanged, setIsNameChanged] = useState(false)
-  const [isAvatarChanged, setIsAvatarChanged] = useState(false)
+  const [isFiledChanged, setIsFieldChanged] = useState(false)
   const [isPasswordEnable, setIsPasswordEnable] = useState(false)
-  const [isPasswordChange, setIsPasswordChange] = useState(false)
 
   const password = useRef()
   password.current = watch("password")
 
-  // Password Input area toggle
-  useEffect(() => {    
-    setIsPasswordChange(isPasswordEnable)
-  }, [isPasswordEnable])
-
-  // Loading Loged in user's info
   useEffect(() => {
-    const { name, email } = user
-    setFormData({ ...formData, name, email })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    let nameAndAvatar = (formState.dirtyFields.name || formState.dirtyFields.avatar) ? true : false
+    let pw = password.current ? true : false
+    let pwError = (formState.errors.password || formState.errors.confirmPassword)
+    setIsFieldChanged(nameAndAvatar || (pw && !pwError))
+  }, [formState])
 
   const onSubmit = (data) => {
-    setValue('password', undefined)
-    setValue('ConfirmPpassword', undefined)
-    clearErrors('password')
-    clearErrors('ConfirmPpassword')
-
     let payload = {}
-    if(!isPasswordChange){
+    if(!password.current){
       payload = {
         name: data.name, 
         avatar: (data.avatar.length ? data.avatar[0].name : ''),
@@ -68,10 +70,8 @@ const Profile = ({ history }) => {
     
     dispatch(updateProfile(sendData, getLoginInfo().token))
     .then(res => {
-      setIsNameChanged(false)
-      setIsAvatarChanged(false)
-      setIsPasswordChange(false)
       setIsPasswordEnable(false)
+      reset(data)
       toast.success('Profile Updated Successfully')
     })
     .catch(error => toast.error(error.response.data.error))
@@ -101,38 +101,26 @@ const Profile = ({ history }) => {
                   <img className="w-12 h-12 rounded-full object-cover" src={`${process.env.REACT_APP_PROFILE_URL}/${user.avatar}`} alt="Profile"/>
                   <span className="tooltip text-center  w-24 text-xs mt-14 bg-gray-600 text-gray-100 px-1 absolute rounded bg-opacity-50 ">Upload your profile image</span>
                 
-                  <input type='file' name='avatar' className="hidden" accept='image/*'
-                    onChange={ e => setIsAvatarChanged(e.target.files[0].name)} 
-                    ref={register} 
-                  />
+                  <input type='file' name='avatar' className="hidden" accept='image/*' ref={register} />
                 </label>
                 <input
                   name='name'
                   className='input-field ml-5'
                   type='text'
                   placeholder='Name'
-                  onChange={e => {
-                    setIsNameChanged(e.target.value !== user.name)
-                    setFormData({ ...formData, name: e.target.value })
-                  }}
-                  value={formData.name}
                   ref={register({ required: true, minLength: 3 })}
                 />
-                {errors.name && 
-                <InputValidate filedName='name' type={errors.name.type} />}
               </div>
-              
+              {errors.name && 
+                <InputValidate filedName='name' type={errors.name.type} />}
               {!user.googleAccount && 
                 <button
                   className={'btn-shadow mt-5'}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    if(!isPasswordEnable) {
-                      setValue('password', undefined)
-                      setValue('ConfirmPpassword', undefined)
-                      clearErrors('password')
-                      clearErrors('ConfirmPpassword')
-                    }
+                  onClick={() => {
+                    setValue('password', '')
+                    setValue('confirmPassword', '')
+                    clearErrors('password')
+                    clearErrors('ConfirmPassword')
                     setIsPasswordEnable(!isPasswordEnable)
                   }}
                 >
@@ -158,7 +146,7 @@ const Profile = ({ history }) => {
               <InputValidate filedName='password' type={errors.password.type} />}
 
               <input
-                name='ConfirmPpassword'
+                name='confirmPassword'
                 className={`input-field mt-5 ${!isPasswordEnable && 'hidden'}`}
                 type='password'
                 placeholder='Confirm Password'
@@ -173,16 +161,16 @@ const Profile = ({ history }) => {
                   )
                 }
               />
-              {!errors.name && !errors.password && errors.ConfirmPpassword && isPasswordEnable &&
-              <InputValidate filedName='confirm password' type={errors.ConfirmPpassword.type} />}
+              {!errors.name && !errors.password && errors.confirmPassword && isPasswordEnable &&
+              <InputValidate filedName='confirmPassword' type={errors.confirmPassword.type} />}
               <div className="flex justify-between space-x-2">
                 <button
                   type='submit'
-                  disabled={!isNameChanged && !isAvatarChanged && !isPasswordChange}
+                  disabled={!isFiledChanged}
                   className='btn btn-submit mt-5'
                 >
-                  <i className={`fas fa-edit fa 1x w-6 ${(!isNameChanged && !isAvatarChanged && !isPasswordChange) && 'text-gray-400'} -ml-2`} />
-                  <span className={`ml-3 ${(!isNameChanged && !isAvatarChanged && !isPasswordChange) && 'text-gray-400'}`}>Update</span>
+                  <i className={`fas fa-edit fa 1x w-6 ${!isFiledChanged && 'text-gray-400'} -ml-2`} />
+                  <span className={`ml-3 ${!isFiledChanged && 'text-gray-400'}`}>Update</span>
                 </button>
                 <button
                   className='btn mt-5 bg-pink-500 text-gray-100 hover:bg-pink-700'
