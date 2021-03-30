@@ -22,6 +22,8 @@ Ultimate Authentication with Email & Google with diferent roles, email verificat
 ```
 git clone https://github.com/badjin/MERN_Authentication.git your-project-name
 npm install
+cd client
+npm install
 ```
 > Create your own config file as the sample file on the folder
 > - config.env (for server and MongoDB)
