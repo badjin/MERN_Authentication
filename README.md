@@ -1,3 +1,4 @@
+
 # MERN stack boilerPlate
 
 Ultimate Authentication with Email & Google with diferent roles, email verification & Forget password
@@ -19,5 +20,10 @@ Ultimate Authentication with Email & Google with diferent roles, email verificat
 
 ### Install
 ```
+git clone https://github.com/badjin/MERN_Authentication.git your-project-name
 npm install
 ```
+> Create your own config file as the sample file on the folder
+> - config.env (for server and MongoDB)
+> - firebaseConfigsample.json (if you are going to use firebase)
+> - .env (for client)
