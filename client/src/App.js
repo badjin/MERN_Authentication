@@ -36,6 +36,14 @@ const App = () => {
   const dispatch = useDispatch()
   const location = useLocation()
   const [isAuth, setIsAuth] = useState('false')
+  const contextClass = {
+    success: "bg-green-600",
+    error: "bg-red-600",
+    info: "bg-gray-600",
+    warning: "bg-orange-400",
+    default: "bg-indigo-600",
+    dark: "bg-white-600 font-gray-300",
+  }
 
   const checkTokenExpired = async () => {
     const loginInfo = getLoginInfo()
@@ -78,7 +86,14 @@ const App = () => {
     <Suspense fallback={(<div>Loading...</div>)}>
       <NavBar />
       <div className='bj-content'>
-        <ToastContainer className='mt-11' />
+        <ToastContainer className='mt-11'
+          toastClassName={({ type }) => contextClass[type || "default"] + 
+            " relative flex p-1 min-h-10 rounded-md justify-between overflow-hidden cursor-pointer"
+          }
+          bodyClassName={() => "text-sm font-white font-med block p-3"}
+          position="top-right"
+          autoClose={3000}
+        />
         <Switch>
           <GuestOnlyRoute condition={isAuth} exact path='/register' component={Register} />
           <GuestOnlyRoute condition={isAuth} exact path='/login' component={Login} />
