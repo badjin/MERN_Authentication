@@ -25,6 +25,15 @@ npm install
 cd client
 npm install
 ```
+### Run for server
+```
+npm run dev
+```
+### Run for client
+```
+cd client
+npm start
+```
 > Create your own config file as the sample file on the folder
 > - config.env (for server and MongoDB)
 > - firebaseConfigsample.json (if you are going to use firebase)
