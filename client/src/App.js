@@ -6,9 +6,9 @@ import axios from 'axios'
 
 import { updateLoginUser, logoutUser, getBgImagesFromUnsplash, getSettings } from './redux'
 
-import PrivateRoute from './routes/PrivateRoute'
-import AdminRoute from './routes/AdminRoute'
-import GuestOnlyRoute from './routes/GuestOnlyRoute'
+import PrivateRoute from './Routes/PrivateRoute'
+import AdminRoute from './Routes/AdminRoute'
+import GuestOnlyRoute from './Routes/GuestOnlyRoute'
 
 import Register from './pages/auth/Register'
 import Activation from './pages/auth/Activation'
