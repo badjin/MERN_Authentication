@@ -1,11 +1,13 @@
 import {
-  SET_BGIMAGES
+  SET_BGIMAGES,
+  SET_CURRENT_BG_IMAGE
 } from './types'
 
 const initialState = {
   bgImages: [],
   isLoading: false,
-  errorMessage: ''
+  errorMessage: '',
+  currentBgImage: ''
 }
 
 
@@ -17,6 +19,12 @@ const bgImageReducer = (state=initialState, action) => {
           bgImages: action.payload, 
           isLoading: false,
           errorMessage: ''
+        }
+
+      case SET_CURRENT_BG_IMAGE:
+        return {
+          ...state,
+          currentBgImage: action.payload
         }
       
       default:

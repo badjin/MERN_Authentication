@@ -8,7 +8,8 @@ export {
 } from './user/actions'
 
 export { 
-  getBgImagesFromUnsplash
+  getBgImagesFromUnsplash,
+  setCurrentBgImage
 } from './bgImage/actions'
 
 export {

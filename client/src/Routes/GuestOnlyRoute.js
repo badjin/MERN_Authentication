@@ -1,13 +1,13 @@
 import { Route, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-const GuestOnlyRoute = ({ component: Component, condition, ...rest }) => {
+const GuestOnlyRoute = ({ component: Component, ...rest }) => {
     const isLogin = useSelector(state => state.user.isLogin)
     return (
         <Route
             {...rest}
             render={props =>
-                (!condition || !isLogin) ? (
+                (!isLogin) ? (
                     <Component {...props} />
                 ) : (
                     <Redirect

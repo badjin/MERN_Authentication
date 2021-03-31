@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {
-  SET_BGIMAGES
+  SET_BGIMAGES,
+  SET_CURRENT_BG_IMAGE
 } from './types'
 
 export const getBgImagesFromUnsplash = (theme) => {
@@ -22,5 +23,12 @@ export const getBgImagesFromUnsplash = (theme) => {
         reject(error)
       })
     })      
+  }
+}
+
+export const setCurrentBgImage = (image) => {
+  return {
+    type: SET_CURRENT_BG_IMAGE,
+    payload: image
   }
 }
