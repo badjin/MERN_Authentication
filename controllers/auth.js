@@ -46,8 +46,7 @@ exports.register = async (req, res, next) => {
 
     try {
       await sendEmail({
-        // to: req.email.email,
-        to: 'railrac23@gmail.com',
+        to: req.email.email,
         subject: 'Activation Email',
         text: message
       })
@@ -185,8 +184,7 @@ exports.forgotPassword = async (req, res, next) => {
       // await db.collection('users').doc(user.id).set(user)
 
       sendEmail({
-        // to: user.email,
-        to: 'railrac23@gmail.com',
+        to: user.email,
         subject: 'Password Reset Request',
         text: message
       })
