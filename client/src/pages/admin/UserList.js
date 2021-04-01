@@ -136,11 +136,13 @@ const Admin = ({ history }) => {
             </div>
           </div>
         </div>
-        <Pagenation 
-          totalPages={totalPages}
-          pageNumber={pageNumber}
-          onSetPageNumber={setPageNumber}
-        />
+        {totalPages && 
+          <Pagenation 
+            totalPages={totalPages}
+            pageNumber={pageNumber}
+            onSetPageNumber={setPageNumber}
+          />        
+        }
       </div>
     </div>
   )

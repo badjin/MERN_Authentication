@@ -25,6 +25,9 @@ const Contact = ({ history }) => {
 
   return ( 
     <div className='bj-container'>
+      <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
+        <SidePanel />   
+      </div>
       <div className='lg:w-1/2 xl:w-5/12 p-3 sm:p-6'>
         <div className='my-4 flex flex-col items-center'>
           <h1 className='text-2xl xl:text-3xl font-extrabold'>
@@ -56,26 +59,16 @@ const Contact = ({ history }) => {
                 })}
               />
               {!errors.name && errors.email && 
-              <InputValidate filedName='email' type={errors.email.type} />}
-
-              <input
-                name='title'
-                className='input-field mt-5'
-                type='text'
-                placeholder='Title'
-                ref={register({ required: true, minLength: 3 })}
-              />
-              {!errors.name && !errors.email && errors.title && 
-              <InputValidate filedName='title' type={errors.title.type} />}
+              <InputValidate filedName='email' type={errors.email.type} />}              
 
               <textarea
                 name='message'
                 className='form-textarea mt-5 p-2 rounded-lg border-2  block w-full'
-                rows="5"
+                rows="8"
                 placeholder='Enter your message'
                 ref={register({ required: true, minLenth:8 })}
               ></textarea>
-              {!errors.name && !errors.email && !errors.title && errors.message &&
+              {!errors.name && !errors.email && errors.message &&
               <InputValidate filedName='message' type={errors.message.type} />}
 
               <button
@@ -90,9 +83,9 @@ const Contact = ({ history }) => {
           </div>
         </div>
       </div>
-      <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
+      {/* <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
         <SidePanel />   
-      </div>
+      </div> */}
     </div>
   )
 }

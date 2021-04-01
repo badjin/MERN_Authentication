@@ -37,7 +37,7 @@ const Navbar = () => {
   }, [])
 
   return (
-    <nav className="md:h-16" style={{ background: 'linear-gradient(to left, #F0F4FD, #A1A3BA)' }}>
+    <nav className="sm:h-16 bg-gray-200">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between">
           <div className="flex space-x-4">
@@ -45,7 +45,7 @@ const Navbar = () => {
             <div>
               <NavLink
                 to="/" exact
-                className="flex items-center py-5 px-2 text-purple-500 hover:text-gray-100 transform hover:scale-125 transition-all duration-300 ease-in-out"
+                className="flex items-center py-5 px-2 text-purple-500 transform hover:scale-125 transition-all duration-300 ease-in-out"
                 activeClassName="active-navbar"
               >
                 <img className="h-6 w-6 mr-1" src={logo} alt="FlowerLogo" />
@@ -57,17 +57,17 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-1">
               <NavLink
                 to="/about"
-                className="py-5 px-3 text-gray-700 hover:bg-gray-500 hover:text-gray-100 uppercase"
+                className="py-5 px-3 text-gray-500 hover:bg-gray-500 hover:text-gray-100 uppercase text-sm"
                 activeClassName="active-navbar"
               >
                 About
               </NavLink>
               <NavLink
                 to="/contact"
-                className="py-5 px-3 text-gray-700 hover:bg-gray-500 hover:text-gray-100 uppercase"
+                className="py-5 px-3 text-gray-500 hover:bg-gray-500 hover:text-gray-100 uppercase text-sm"
                 activeClassName="active-navbar"
               >
-                Contacts
+                Contact
               </NavLink>
               { (user.isLogin && user.userData.role === 'admin') && 
                 <AdminMenu />
@@ -140,17 +140,17 @@ const Navbar = () => {
         <div className="mobile-menu md:hidden flex flex-col items-center justify-start">
           <NavLink
             to="/about"
-            className="py-1 px-3 text-gray-700 hover:bg-gray-500 hover:text-gray-100 rounded-full uppercase"
+            className="py-1 px-3 text-gray-500 hover:bg-gray-500 hover:text-gray-100 rounded-full uppercase text-sm"
             activeClassName="active-navbar" onClick={closeMobileMenu}
           >
             About
           </NavLink>
           <NavLink
             to="/contact"
-            className="mb-2 py-1 px-3 text-gray-700 hover:bg-gray-500 hover:text-gray-100 rounded-full uppercase"
+            className="mb-2 py-1 px-3 text-gray-500 hover:bg-gray-500 hover:text-gray-100 rounded-full uppercase text-sm"
             activeClassName="active-navbar" onClick={closeMobileMenu}
           >
-            Contacts
+            Contact
           </NavLink>
           {(user.isLogin && user.userData.role === 'admin') && 
             <>
