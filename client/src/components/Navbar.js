@@ -37,7 +37,7 @@ const Navbar = () => {
   }, [])
 
   return (
-    <nav className="sm:h-16 bg-gray-200">
+    <nav className="sm:h-16 bg-gray-200 font-body">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between">
           <div className="flex space-x-4">
