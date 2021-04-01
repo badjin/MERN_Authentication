@@ -136,7 +136,7 @@ const Admin = ({ history }) => {
             </div>
           </div>
         </div>
-        {totalPages && 
+        {totalPages > 1 && 
           <Pagenation 
             totalPages={totalPages}
             pageNumber={pageNumber}
