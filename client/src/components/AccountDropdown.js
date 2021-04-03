@@ -10,7 +10,7 @@ export const AccountDropdown = ({user, onLogout}) => {
   }, [])
 
   return (
-    <div className='relative '>
+    <div className='relative z-10'>
       <div className='flex items-center space-x-3'>
         <span className='text-purple-500 text-sm'>{user.name}</span>
         <button           
